@@ -1,0 +1,25 @@
+Package: AniSpace
+Type: Package
+Title: Spatial and Temporal Analysis of Animal Position Data
+Version: 0.0.0.1000
+Authors@R: c(
+    person("Hector", "Marina", email = "hector.marina@slu.se", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0001-9226-2902")),
+    person("Ida", "Hansson", email = "first.last@example.com", role = "aut"),
+    person("Keni", "Ren", email = "first.last@example.com", role = "aut"),
+    person("Lars", "Rönnegård", email = "lars.ronnegard@slu.se", role = "aut",
+           comment = c(ORCID = "0000-0002-1057-5401")))
+Maintainer: Hector Marina <hector.marina@slu.se>
+Description: Functions for filtering, manipulating, processing, and analysing
+ spatio-temporal position data from livestock and wildlife, including movement
+ metrics, polygon-based filtering, and CSI:DT-style workflows.
+License: file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+Depends: R (>= 4.2)
+Imports: akima, dplyr, tidyr, ggplot2, hglm, adehabitatHR
+Suggests: knitr, rmarkdown, pkgdown
+VignetteBuilder: knitr
+LazyData: true
+LazyDataCompression: xz

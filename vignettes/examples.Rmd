@@ -1,0 +1,364 @@
+---
+title: "AniSpace vignettes"
+author: "Hector Marina"
+date: "2025-09-01"
+output: html_document
+---
+
+```{=html}
+<style>
+body {
+text-align: justify}
+</style>
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=TRUE)
+htmltools::tagList()
+```
+
+
+# Examples
+
+## Introduction
+
+This tutorial provides an overview of how to read and manipulate location data using the AniSpace R package. During the tutorial, we will examine a commercial dairy farm in Sweden. The farm has installed an ultra-wideband Real-Time Location System (RTLS) that provides the location of all the cows. Lactating cows have been fitted with tags attached to their collars. By using the cows' position information, we can investigate their daily behaviour, how they utilise the area, and their spatial interactions with their peers.
+
+1.  [Install AniSpace package](#ip)\
+    1.1. [Position information](#pi)\
+    1.2. [Animal information](#ai)\
+    1.3. [Farm information](#fi)
+2.  [Descriptive statistics](#ds)\
+    2.1. [Position stats](#ps)\
+    2.2. [Area stats](as)\
+    2.3. [Accuracy of the system](#aots)
+3.  [Filtering data](#fd)
+4.  [Interpolation](#ii)
+5.  [Movement analysis](#ma)\
+6.  [Social networks](#sn)\
+
+### Install AniSpace package {ip}
+
+You can install the development version of `AniSpace` from GitHub using `remotes`:
+
+```{r message=FALSE, eval=FALSE}
+# install.packages("remotes")
+remotes::install_github("Hector-Marina/AniSpace")
+```
+
+Lets load the R package into our environment and the example data from the Swedish farm:
+
+```{r message=FALSE, eval=FALSE}
+library("AniSpace")
+data("cows")
+```
+
+```{r message=FALSE, include=FALSE}
+library("AniSpace")
+# A code to load from local folder the cows data
+positions=read.csv("../data/positions.csv", header=TRUE)
+animals  =read.csv("../data/animals.csv"  , header=TRUE)
+areas    =read.csv("../data/barnplan.csv" , header=TRUE)
+
+cows=list(positions=positions,animals=animals,areas=areas)
+```
+
+## Position information {#pi}
+
+Position data was collected from a Swedish commercial dairy farm. This farm housed around 210 lactating dairy cows (Holstein, Red Dairy Cattle, and Crossbred) in a non-insulated free-stall barn. The farm is divided into two milking groups, early and late lactation groups, each with a pen area of 14 m × 56 m and 102-103 cubicles, with rubber mattresses and sawdust as bedding material. Further information about the farm can be found in [Hansson et al., 2023](https://doi.org/10.3168/JDS.2022-21915).\
+
+Firstly, we check the position information about the 231 tags located in this barn. For size purposes, this file will only contain the first 20 individuals. Position information contains:\
+- *Date*: Date when the information was recorded.\
+- *Time*: Tag mounted identification code.\
+- *ID*: POSIXct format (milliseconds).\
+- *x*: X coordinate (centimetres).\
+- *y*: Y coordinate (centimetres).\
+
+```{r message=FALSE}
+head(cows$positions)
+```
+
+For efficiency purposes, AniSpace, like other packages that handle spatial data, requires a special class. Let's load this information into a more efficient format using our first `AniSpace` function `load.Space()` :) :
+
+```{r message=FALSE}
+df=load.Space(cows$positions)
+```
+
+The AniSpace class contains information about the position of the individuals, but also it has different `slots` prepared for other information related to the animals:
+- **NIDs**: Vector containing the assigned index of the individuals.\
+- **IDs**:  Vector containing the identification of the individuals.\
+- **Info**: Indexed information about the individuals.\
+- **TLim**: Contains information about the temporal range covered by the positions (Index=1s).\
+- **TRes*': Maximum temporal resolution of the positions (e.g. smallest time step).\
+- **Pos**:  Indexed positions (x,y,z) of the individuals.\
+- **Area**: Information about the spatial area available for the individuals (Polygon format).\
+
+```{r message=FALSE}
+names(df) # or slotNames(df)
+```
+
+
+### Animal information {#ai}
+
+Secondly, we add the individual records of the dairy cows on this Swedish farm. Animal information contains:\
+- *Date*: Date when the information was recorded.\
+- *ID*: Tag mounted identification code.\
+- *Parity*: Number of current lactation.\
+- *DIM*: Days in milk or days since the last birth date.\
+- *Pregnancy_status*: Stage of pregnancy (0: Open, 1: Pregnant).\
+- *Breed*: Breed of each cow (HOL: Holstein, RDC: Red Dairy Cattle or CROSS: Crossbreed).\
+- *Disease*: Animal' status (0: Healthy, 1: Minor or mayor lesions).\
+
+```{r message=FALSE}
+head(cows$animals)
+```
+
+You can add animal's information to the `AniSpace` object using the function `load.Info()` :). This function will complete the 'Info' slot that we saw earlier:
+
+```{r message=FALSE}
+df=load.Info(df, InfObj=cows$animals)
+```
+
+### Farm information {#fi}
+
+The barn is divided into two sections for milking: an early lactation group on the right and a late lactation group on the left. Cubicles are located in the middle of the barn, with feeding tables along the sides. Below, we can see what the farm blueprint information looks like:\
+- *Area*: Area identification code.\
+- *x1*: X1 coordinate of vertex\
+- *x2*: X2 coordinate of vertex\
+- *y1*: Y1 coordinate of vertex\
+- *y2*: Y2 coordinate of vertex\
+- *Color*: Just to make plots pretty.\
+
+```{r message=FALSE}
+head(cows$areas)
+```
+
+Thirdly, we will fill in the 'Area' slot of our 'AniSpace' object using the 'load.Area()' function:
+
+```{r}
+df=load.Area(AniObj=df, square2poly(cows$areas))
+```
+
+To check that the data has been loaded correctly, simply write the name of the AniSpace object:
+
+```{r message=FALSE}
+df
+```
+
+If we want to depict the position of any of our individuals we just need to use the function `plotAniSpace()` and indicate the Numeric identification the individual `NIDs` (1:10) or the TagID (`IDs="2417195"`). For instancel:\
+
+#  {.tabset}
+
+## One individual
+
+```{r}
+plotAniSpace(df,IDs="2417195")
+```
+
+## Two individuals
+
+```{r}
+plotAniSpace(df,NIDs=c(13,70))
+```
+
+## Three individuals
+
+```{r}
+plotAniSpace(df,NIDs=c(13,40,41))
+```
+
+# 
+
+
+## Descriptive statistics {#df}
+
+Estimate the statistics of the temporal and spatial information contained within the `AniSpace` object at individual and area levels.
+
+
+### Position stats {#ps}
+  
+The function `stats.Pos()` reports the minimum and maximum x and y positions per individual, as well as the time range between registered positions, the mean time step or interval between positions, and the mean and maximum speed per individual:
+
+```{r}
+df.stats.Pos=stats.Pos(AniObj=df, graphs=TRUE)
+```
+
+
+If the argument `graphs` is set to TRUE in the `stats.Pos()` function, the output file is a list. The first object in this list contains the descriptive statistics for each individual, and the second object contains the graphs.
+```{r}
+head(df.stats.Pos$DescriptiveStats)
+```
+
+
+### Area stats {#as}
+
+The function `stats.Area()` reports the minimum and maximum X and Y positions per area, as well as the area, the total area occupied by the registered positions and the density:
+
+```{r}
+df.stats.Area=stats.Area(AniObj=df, graphs=TRUE)
+```
+
+Similarly, If the argument `graphs` is set to TRUE in the `stats.Area()` function the ouput depict the areas contained in the object. In this case, the output object only contains the descriptive statistics for each area.
+
+```{r}
+head(df.stats.Area$DescriptiveStats)
+```
+
+
+### Accuracy of the system {#aots}
+    
+There is different ways of estimating the precision of real-time location systems. Following we will use the method described by [Hansson et al., 2023](https://doi.org/10.3168/JDS.2022-21915), consists of using position stand-still tags in the barn to measure the mean error distance recorded by these devices compared to a fixed position. The information of these tags are included in our `AniSpace` object and recorded daily. Let's plot ten of them: \
+
+
+```{r}
+plotAniSpace(df,NIDs=c(1:10))
+```
+    
+Similarly, to the previous function, if the argument `graphs` is set to TRUE in the `stats.still()` function, the output file is a list. The first object in this list contains the descriptive statistics for each individual, and the second object contains the graphs.
+
+```{r}
+stillTags.stats=stats.still(AniObj=df,NIDs=c(1:10), percentile=c(0.90,0.95,0.99),graphs=TRUE)
+```
+
+The `mean_error` column represents the average distance to the centroid of all recorded positions. The quantiles represent the minimum distance from the tag that encompasses at least 90%, 95% or 99% of positions relative to the centroid.
+
+```{r}
+head(stillTags.stats$stats)
+```
+
+
+## Filtering data {#fd}
+
+Using the function `filter.AniSpace()` allows us to filter the `AniSpace` object using the identification of individuals, specific time ranges and/or certain areas.
+
+```{r}
+df.ID.filt=filter.AniSpace(AniObj=df,NIDs=c(13:16))
+```
+
+
+Let's see how many individuals are now in the object:
+```{r}
+df.ID.filt
+```
+
+Now, we will keep all positions between 11:00 and 11:59 PM:
+```{r}
+Tmin=as.numeric(as.POSIXct("2020-10-16 11:00:00", format = "%Y-%m-%d %H:%M:%S", tz = "UTC"))
+Tmax=as.numeric(as.POSIXct("2020-10-16 11:59:59", format = "%Y-%m-%d %H:%M:%S", tz = "UTC"))
+df.Time.filt=filter.AniSpace(AniObj=df, TimeWindow=c(Tmin,Tmax))
+```
+
+Let's see what the Time span is in our object after filtering:
+```{r}
+df.Time.filt
+```
+
+Lastly, we will filter areas:
+```{r}
+df.Area.filt=filter.AniSpace(AniObj=df,Area=as.character(10))
+```
+
+Let's see how many areas are now in the object:
+```{r}
+df.Area.filt
+```
+
+Let's check whether the filtering works by plotting the position of one of the individuals:
+```{r}
+plotAniSpace(df.Area.filt,IDs="2417161")
+```
+
+
+When filtering the `AniSpace` object using the function `filter.AniSpace()` we can consider an extension of the borders of the areas by using the option `soft.boundaries`:
+```{r}
+df.Area.filt2=filter.AniSpace(AniObj=df,Area=as.character(10), soft.boundaries = 100)
+```
+
+Let's check if the area occupied increased after using the option `soft.boundaries`:
+```{r}
+plotAniSpace(df.Area.filt2,IDs="2417161")
+```
+
+We used this option in various scientific studies to keep track of the cows' positions when they put their heads through the rails. When feeding, the tags could legitimately be found outside the pen area. Therefore, we extended the boundaries by 50 cm in all directions (See [Marina et al., 2024](https://doi.org/10.1016/J.APPLANIM.2024.106366)).
+
+
+## Interpolation {#ii}
+
+Due to the missing data, interpolation is a necessary step before this information can be analysed. The interpolation method complete missing positions using different methods (`linear`,`spline`, or `makima`). In this case, we will apply  the Modified Akima interpolation method following [Ren et al., 2022](https://doi.org/10.3389/fanim.2022.896666).
+
+```{r message=FALSE}
+df.inter=interpolate.AniSpace(AniObj=df.ID.filt, method="makima", tails=TRUE)
+```
+
+Plot the real position data (red) on top of the interpolated data (black):
+```{r}
+plotAniSpace(df.inter,NIDs=1)
+Inter=df.inter@Pos[[1]]$Inter
+points(df.inter@Pos[[1]]$x[!Inter],df.inter@Pos[[1]]$y[!Inter],col="black" )
+```
+
+The spikes found beyond the designated areas prove the necessity of pre-processing this data by filtering the spikes registered by the system using the function `filter.spikes()` and clustering the positions to smooth the animals' walking paths using the function `cluster.AniSpace()`. However, these functions are not available for this vignette.  
+
+
+## Movement analysis {#ma}
+
+The function `movement.AniSpace` estimates the distance walked, speed and the turning angles per individual, and performs a cluster analysis of the areas included in the `AniObj` object to classify different behaviours. If the functions incorporates the option `k.means==TRUE`, it will perform a K-means cluster analysis. This uses the speed and turning angle information from all individuals in the `AniObj` to assign `k.mov` behaviours to the different areas detailed in the object.
+
+```{r message=FALSE}
+df.mov=movement.AniSpace(AniObj=df.ID.filt)
+```
+
+The output object reports the time interval between positions, the distance walked between registers and the speed, as well as the turning angle.
+```{r}
+head(df.mov)
+```
+
+Create a circular histogram depicting the turning angles:
+```{r}
+library(ggplot2)
+ggplot(df.mov, aes(x = Turn_angle)) +
+  geom_histogram(binwidth = 30, fill = "steelblue", color = "white", boundary = 0) +
+  coord_polar(start = 0, direction = 1) +
+  scale_x_continuous(limits = c(0, 360), breaks = seq(0, 360, by = 45)) +
+  labs(x = "Angle (degrees)", y = "Count",
+       title = "Circular Histogram of Turning Angles") +
+  theme_minimal()
+```
+
+## Social networks {#sn}
+    
+Lastly, we will run the function `spatialint.AniSpace()` to estimate the pairwise spatial interactions between individuals included in the object. The function will return an adjacency matrix based on the chosen proximity method. (`time` or `nint`). `time` will export the duration spent by each pair of animals that are closer to each other than the specified `dist.thr` threshold. `nint` will record the number of instances where each pair of animals got within the specified `dist.thr` threshold of each other.
+
+```{r message=FALSE}
+AdjMat.obj=spatialint.AniSpace(AniObj=df.ID.filt)
+```
+The adjacency matrix shows how many seconds each pair of individuals spent within 2.5 metres of each other (See default parameters of `spatialint.AniSpace()`)
+```{r}
+AdjMat.obj
+```
+
+Let's plot this little network, but just to make it interesting lets convert it to binary and assume that cows did interact when they spent more that 600 s (10 minutes together:
+
+```{r}
+library(igraph)
+AdjMat.obj.bin=ifelse(AdjMat.obj>600,1,0)
+
+grp=as.character(df.ID.filt@Info$Parity)
+pal=setNames(rainbow(length(unique(grp))), unique(grp))
+
+g=graph_from_adjacency_matrix(AdjMat.obj, mode = "undirected", diag = FALSE, weighted = TRUE)
+plot(g,vertex.color = pal[grp], vertex.label = NA)
+```
+
+
+
+#### Recommended literature
+
+-   Hansson, I., Silvera, A., Ren, K., Woudstra, S., Skarin, A., Fikse, W. F., Nielsen, P. P., & Rönnegård, L. (2023). [Cow characteristics associated with the variation in number of contacts between dairy cows](https://doi.org/10.3168/JDS.2022-21915). Journal of Dairy Science.
+-   Ren, K., Alam, M., Nielsen, P. P., Gussmann, M. K., & Rönnegård, L. (2022). [Interpolation methods to improve data quality of indoor positioning data for dairy cattle](https://doi.org/10.3389/FANIM.2022.896666). Frontiers in Animal Science.
+-   Ren, K., Nielsen, P. P., Alam, M., & Rönnegård, L. (2021). [Where do we find missing data in a commercial real-time location system? Evidence from 2 dairy farms](https://doi.org/10.3168/JDSC.2020-0064). JDS Communications.
+-   Churakov, M., Silvera, A. M., Gussmann, M., & Nielsen, P. P. (2021). [Parity and days in milk affect cubicle occupancy in dairy cows](https://doi.org/10.1016/J.APPLANIM.2021.105494). Applied Animal Behaviour Science.
+-   Marina, H., Ren, K., Hansson, I., Fikse, F., Nielsen, P.P. & Rönnegård, L. (2024). [New insight into social relationships in dairy cows and how time of birth, parity, and relatedness affect spatial interactions later in life](https://doi.org/10.3168/JDS.2023-23483). Journal of Dairy Science.
+-   Marina, H., Nielsen, P.P., Fikse, W.F. & Rönnegård, L. (2024). [Multiple factors shape social contacts in dairy cows](https://doi.org/10.1016/J.APPLANIM.2024.106366). Applied Animal Behaviour Science.
+-   Marina, H., Fikse, W.F. & Rönnegård, L. (2024). [Social network analysis to predict social behavior in dairy cattle](https://doi.org/10.3168/JDSC.2023-0507). JDS Communications.
+-   Gussmann, M., Marina, H., Ren, K., Rönnegård, L. & Nielsen, P.P. (2025). [Variations in cow behaviour after regrouping in a conventional Swedish dairy herd](https://doi.org/10.1016/J.APPLANIM.2025.106790). Applied Animal Behaviour Science.
