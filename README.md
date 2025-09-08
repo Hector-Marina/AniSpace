@@ -21,7 +21,7 @@ designed for **high-resolution position data** and supports workflows such as:
 
 -   [DigiGuard project](https://www.slu.se/en/research/research-catalogue/projekt/d/digiguard-project/)
 
-\|-----------------------------------\| \| ![CSIDT Logo](man/figures/CSIDTLogo.jpg) \| ![DigiGuard Logo](man/figures/DGLogo.png) \|
+![CSIDT Logo](man/figures/CSIDTLogo.jpg)  ![DigiGuard Logo](man/figures/DGLogo.png)
 
 📍 **Place**: SLU, Uppsala, Sweden
 
