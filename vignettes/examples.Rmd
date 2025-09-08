@@ -5,6 +5,8 @@ date: "2025-09-01"
 output: html_document
 ---
 
+![](../logo/logo.jpg)
+
 ```{=html}
 <style>
 body {
@@ -37,7 +39,7 @@ This tutorial provides an overview of how to read and manipulate location data u
 5.  [Movement analysis](#ma)\
 6.  [Social networks](#sn)\
 
-### Install AniSpace package {ip}
+### Install AniSpace package {#ip}
 
 You can install the development version of `AniSpace` from GitHub using `remotes`:
 
@@ -158,13 +160,13 @@ plotAniSpace(df,IDs="2417195")
 ## Two individuals
 
 ```{r}
-plotAniSpace(df,NIDs=c(13,70))
+plotAniSpace(df,NIDs=c(12,13))
 ```
 
 ## Three individuals
 
 ```{r}
-plotAniSpace(df,NIDs=c(13,40,41))
+plotAniSpace(df,NIDs=c(12,13,18))
 ```
 
 # 
@@ -229,10 +231,10 @@ head(stillTags.stats$stats)
 
 ## Filtering data {#fd}
 
-Using the function `filter.AniSpace()` allows us to filter the `AniSpace` object using the identification of individuals, specific time ranges and/or certain areas.
+Using the function `filterAniSpace()` allows us to filter the `AniSpace` object using the identification of individuals, specific time ranges and/or certain areas.
 
 ```{r}
-df.ID.filt=filter.AniSpace(AniObj=df,NIDs=c(13:16))
+df.ID.filt=filterAniSpace(AniObj=df,NIDs=c(12:16,18))
 ```
 
 
@@ -245,7 +247,7 @@ Now, we will keep all positions between 11:00 and 11:59 PM:
 ```{r}
 Tmin=as.numeric(as.POSIXct("2020-10-16 11:00:00", format = "%Y-%m-%d %H:%M:%S", tz = "UTC"))
 Tmax=as.numeric(as.POSIXct("2020-10-16 11:59:59", format = "%Y-%m-%d %H:%M:%S", tz = "UTC"))
-df.Time.filt=filter.AniSpace(AniObj=df, TimeWindow=c(Tmin,Tmax))
+df.Time.filt=filterAniSpace(AniObj=df, TimeWindow=c(Tmin,Tmax))
 ```
 
 Let's see what the Time span is in our object after filtering:
@@ -255,7 +257,7 @@ df.Time.filt
 
 Lastly, we will filter areas:
 ```{r}
-df.Area.filt=filter.AniSpace(AniObj=df,Area=as.character(10))
+df.Area.filt=filterAniSpace(AniObj=df,Area=as.character(10))
 ```
 
 Let's see how many areas are now in the object:
@@ -269,9 +271,9 @@ plotAniSpace(df.Area.filt,IDs="2417161")
 ```
 
 
-When filtering the `AniSpace` object using the function `filter.AniSpace()` we can consider an extension of the borders of the areas by using the option `soft.boundaries`:
+When filtering the `AniSpace` object using the function `filterAniSpace()` we can consider an extension of the borders of the areas by using the option `soft.boundaries`:
 ```{r}
-df.Area.filt2=filter.AniSpace(AniObj=df,Area=as.character(10), soft.boundaries = 100)
+df.Area.filt2=filterAniSpace(AniObj=df,Area=as.character(10), soft.boundaries = 200)
 ```
 
 Let's check if the area occupied increased after using the option `soft.boundaries`:
@@ -286,25 +288,25 @@ We used this option in various scientific studies to keep track of the cows' pos
 
 Due to the missing data, interpolation is a necessary step before this information can be analysed. The interpolation method complete missing positions using different methods (`linear`,`spline`, or `makima`). In this case, we will apply  the Modified Akima interpolation method following [Ren et al., 2022](https://doi.org/10.3389/fanim.2022.896666).
 
-```{r message=FALSE}
+```{r, results='hide', message=FALSE, warning=FALSE}
 df.inter=interpolate.AniSpace(AniObj=df.ID.filt, method="makima", tails=TRUE)
 ```
 
 Plot the real position data (red) on top of the interpolated data (black):
 ```{r}
-plotAniSpace(df.inter,NIDs=1)
-Inter=df.inter@Pos[[1]]$Inter
-points(df.inter@Pos[[1]]$x[!Inter],df.inter@Pos[[1]]$y[!Inter],col="black" )
+plotAniSpace(df.inter,NIDs=2)
+Inter=df.inter@Pos[[2]]$Inter
+points(df.inter@Pos[[2]]$x[!Inter],df.inter@Pos[[2]]$y[!Inter],col="black" )
 ```
 
-The spikes found beyond the designated areas prove the necessity of pre-processing this data by filtering the spikes registered by the system using the function `filter.spikes()` and clustering the positions to smooth the animals' walking paths using the function `cluster.AniSpace()`. However, these functions are not available for this vignette.  
+The spikes found beyond the designated group area prove the necessity of pre-processing this data by filtering the spikes registered by the system using the function `filter.spikes()` and clustering the positions to smooth the animals' walking paths using the function `cluster.AniSpace()`. However, these functions are not available for this vignette.  
 
 
 ## Movement analysis {#ma}
 
 The function `movement.AniSpace` estimates the distance walked, speed and the turning angles per individual, and performs a cluster analysis of the areas included in the `AniObj` object to classify different behaviours. If the functions incorporates the option `k.means==TRUE`, it will perform a K-means cluster analysis. This uses the speed and turning angle information from all individuals in the `AniObj` to assign `k.mov` behaviours to the different areas detailed in the object.
 
-```{r message=FALSE}
+```{r, results='hide', message=FALSE, warning=FALSE}
 df.mov=movement.AniSpace(AniObj=df.ID.filt)
 ```
 
@@ -329,9 +331,10 @@ ggplot(df.mov, aes(x = Turn_angle)) +
     
 Lastly, we will run the function `spatialint.AniSpace()` to estimate the pairwise spatial interactions between individuals included in the object. The function will return an adjacency matrix based on the chosen proximity method. (`time` or `nint`). `time` will export the duration spent by each pair of animals that are closer to each other than the specified `dist.thr` threshold. `nint` will record the number of instances where each pair of animals got within the specified `dist.thr` threshold of each other.
 
-```{r message=FALSE}
+```{r,results='hide', message=FALSE, warning=FALSE}
 AdjMat.obj=spatialint.AniSpace(AniObj=df.ID.filt)
 ```
+
 The adjacency matrix shows how many seconds each pair of individuals spent within 2.5 metres of each other (See default parameters of `spatialint.AniSpace()`)
 ```{r}
 AdjMat.obj

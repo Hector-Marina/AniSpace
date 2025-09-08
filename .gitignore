@@ -2,3 +2,8 @@
 .Rhistory
 .RData
 .Ruserdata
+
+data/animals.csv
+data/barnplan.csv
+data/positions.csv
+data/cows.R
