@@ -1,6 +1,6 @@
 # AniSpace v0.0.1
 
-![AniSpace Logo](logo/logo.jpg){width="150"}
+![AniSpace Logo](logo/logo.jpg)
 
 <img src="https://img.shields.io/badge/license-SLU-green.svg" alt="License: SLU"/> <img src="https://img.shields.io/badge/topic-Animal%20Movement-orange.svg" alt="Topic"/> <img src="https://img.shields.io/badge/topic-Position%20Data-blue.svg" alt="Topic"/>
 
@@ -21,16 +21,13 @@ designed for **high-resolution position data** and supports workflows such as:
 
 -   [DigiGuard project](https://www.slu.se/en/research/research-catalogue/projekt/d/digiguard-project/)
 
-+-------------------------------------------------------------------------+------------------------------------------------------------------------------+
-| ![CSIDT Logo](man/figures/CSIDTLogo.jpg){alt="CSIDT Logo" width="266"}\ | ![DigiGuard Logo](man/figures/DGLogo.png){alt="DigiGuard Logo" width="249"}\ |
-| ~**CSIDT Project**~                                                     | ~**DigiGuard Project**~                                                      |
-+-------------------------------------------------------------------------+------------------------------------------------------------------------------+
+\|-----------------------------------\| \| ![CSIDT Logo](man/figures/CSIDTLogo.jpg) \| ![DigiGuard Logo](man/figures/DGLogo.png) \|
 
 📍 **Place**: SLU, Uppsala, Sweden
 
 📅 **Full release data**: 1 November 2025
 
-![Cat coding](https://raw.githubusercontent.com/fate0/fate0/master/artwork/pusheencode.gif){align="center" width="37%"}
+![Cat coding](https://raw.githubusercontent.com/fate0/fate0/master/artwork/pusheencode.gif)
 
 ------------------------------------------------------------------------
 
