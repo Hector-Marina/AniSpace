@@ -4,8 +4,8 @@
 
 <img src="https://img.shields.io/badge/license-SLU-green.svg" alt="License: SLU"/> <img src="https://img.shields.io/badge/topic-Animal%20Movement-orange.svg" alt="Topic"/> <img src="https://img.shields.io/badge/topic-Position%20Data-blue.svg" alt="Topic"/>
 
-The **AniSpace** R package provides a flexible and efficient framework to perform\
-spatial analysis of livestock and wild animal populations. It is specifically\
+The **AniSpace** R package provides a flexible and efficient framework to perform 
+spatial analysis of livestock and wild animal populations. It is specifically 
 designed for **high-resolution position data** and supports workflows such as:
 
 -   Cleaning and validation of position data
