@@ -1,7 +1,7 @@
 Package: AniSpace
 Type: Package
 Title: Spatial and Temporal Analysis of Animal Position Data
-Version: 0.0.0.1000
+Version: 0.0.0.2000
 Authors@R: c(
     person("Hector", "Marina", email = "hector.marina@slu.se", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-9226-2902")),

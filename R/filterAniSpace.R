@@ -27,14 +27,13 @@
 #' df.Time.filt
 #'
 #' # Filter positions from the resting area
-#' df.Area.filt=filterAniSpace(df,Area=c(1:5))
+#' df.Area.filt=filterAniSpace(df,Area=names(df@Area)[c(1:5)])
 #' df.Area.filt
 #'
 #'
 #' @export
 
 filterAniSpace=function(AniObj, NIDs=NULL, IDs=NULL, TimeWindow=NULL, Area=NULL, soft.boundaries=0, verbose=TRUE) {
-
   # Control parameters
   if (!inherits(AniObj, "AniSpace")) stop("`AniObj` must be class 'AniSpace'.")
   if( !validate(AniObj))             stop("Invalid `AniObj` object.")
@@ -57,7 +56,7 @@ filterAniSpace=function(AniObj, NIDs=NULL, IDs=NULL, TimeWindow=NULL, Area=NULL,
     if(!is.character(Area))                       stop("`Area` must be class character")
     l=sapply(seq_along(AniObj@Area), function(ii) {AniObj@Area[[ii]]$ID})
     if(!any(Area%in%l))          stop("`Area` not found in AniSpace object")
-    NArea=which(Area==l)
+    NArea=which(l%in%Area)
   }
 
   if(!is.null(soft.boundaries)){
@@ -72,7 +71,7 @@ filterAniSpace=function(AniObj, NIDs=NULL, IDs=NULL, TimeWindow=NULL, Area=NULL,
     AniObj@NIDs=AniObj@NIDs[NIDs]
     AniObj@IDs =AniObj@IDs[NIDs]
 
-    if(!is.null(AniObj@Info)){
+    if(!is.null(AniObj@Info) && length(AniObj@Info) > 0){
       for (ii in c(1:length(AniObj@Info))){
         AniObj@Info[[ii]]=AniObj@Info[[ii]][NIDs]
       }
@@ -136,7 +135,8 @@ filterAniSpace=function(AniObj, NIDs=NULL, IDs=NULL, TimeWindow=NULL, Area=NULL,
           }
           IN | ED
         }, simplify = "matrix")
-      In={rowSums(In_mat) > 0}
+      #In={rowSums(In_mat) > 0}
+      In=if (length(In_mat) == 0L) rep(FALSE, length(vx)) else if (is.list(In_mat) && !is.matrix(In_mat)) Reduce(`|`, In_mat) else rowSums(as.matrix(In_mat) != 0) > 0L
       AniObj@Pos[[ii]][c("Time", "x", "y")]=lapply(AniObj@Pos[[ii]][c("Time", "x", "y")], `[`, In)
     }
   }
@@ -152,7 +152,7 @@ filterAniSpace=function(AniObj, NIDs=NULL, IDs=NULL, TimeWindow=NULL, Area=NULL,
     AniObj@NIDs=AniObj@NIDs[l]
     AniObj@IDs =AniObj@IDs[l]
 
-    if(!is.null(AniObj@Info)){
+    if(!is.null(AniObj@Info) && length(AniObj@Info) > 0){
       for (ii in c(1:length(AniObj@Info))){
         AniObj@Info[[ii]]=AniObj@Info[[ii]][l]
       }

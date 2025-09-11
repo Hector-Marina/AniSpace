@@ -4,7 +4,7 @@
 \alias{plotAniSpace}
 \title{Plot AniSpace position information}
 \usage{
-plotAniSpace(AniObj, NIDs = NULL, IDs = NULL, Area = NULL)
+plotAniSpace(AniObj, NIDs = NULL, IDs = NULL, Area = NULL, ...)
 }
 \arguments{
 \item{AniObj}{An AniSpace object}

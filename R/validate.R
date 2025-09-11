@@ -1,9 +1,11 @@
 #' Validate AniSpace object's information
 #'
 #' @description
-#' `validate()` validate AniSpace object's information
+#' `validate()` Verifies and Consistency Checks for AniSpace Objects
 #'
-#' @param AniObj An AniSpace object
+#' @param AniObj Performs a series of integrity and quality-control checks on an
+#' `AniSpace` object or dataset, ensuring that positional, animal,
+#' and area data meet expected structural and logical criteria.
 #'
 #' @examples
 #' validate(df)

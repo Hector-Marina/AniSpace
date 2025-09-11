@@ -10,6 +10,7 @@
 #' @param y.col A character variable specifying the name of the column containing the spatial y-axis information in the file (*Default: "y"*).
 #' @param TRes A numeric variable indicating the time resolution/frequency of the positions (*Default: 1 sec*).
 #' @param Temp.sort A variable indicating whether the `load.Space` function should (TRUE) or should not (FALSE) sort the spatio-temporal information by `ID.col` and `Time.col` (*Default: TRUE*).
+#' @param verbose A logical variable specifying whether to print informative messages (*Default: TRUE*).
 #'
 #' @keywords transform animal spatial information
 #'
@@ -21,7 +22,7 @@
 #'
 #' @export
 
-load.Space <- function(PosObj, Time.col="Time", ID.col="ID", x.col="x", y.col="y", TRes=1, Temp.sort=TRUE) {
+load.Space <- function(PosObj, Time.col="Time", ID.col="ID", x.col="x", y.col="y", TRes=1, Temp.sort=TRUE, verbose=TRUE) {
   # Control parameters
   if(!is.data.frame(PosObj)) stop("`PosObj` must be a data.frame.")
   if(!all(is.character(Time.col), is.character(ID.col), is.character(x.col), is.character(y.col)))  stop("Column names (*.col) must be non-empty character scalars.")
@@ -44,7 +45,7 @@ load.Space <- function(PosObj, Time.col="Time", ID.col="ID", x.col="x", y.col="y
   if(!all(is.numeric(PosObj[,Time.col]),  is.numeric(PosObj[,x.col]), is.numeric(PosObj[,y.col]))) stop("Time and coordinates must be numeric")
   if(sum(!complete.cases(PosObj))>0){
     PosObj=PosObj[complete.cases(PosObj),]
-    message(paste("Missing values were filtered from:", path))
+    if(verbose) message(paste("Missing values were filtered from:", path))
   }
 
   # Handle Time correct epoch time (Seconds and/or miliseconds)
@@ -54,7 +55,7 @@ load.Space <- function(PosObj, Time.col="Time", ID.col="ID", x.col="x", y.col="y
   TLim=c(min(as.numeric(PosObj[,Time.col])),max(as.numeric(PosObj[,Time.col])))
 
   if(as.Date(Sys.Date())<as.Date(as.POSIXct(TLim[2], origin = "1970-01-01", tz="UTC"))){
-    message("The dates in the dataset are older than the current system date (UTC).")
+    if(verbose) message("The dates in the dataset are older than the current system date (UTC).")
   }
 
   Pos=lapply(split(PosObj[, c(Time.col,x.col,y.col)], PosObj[,ID.col]), function(d) {

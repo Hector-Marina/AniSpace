@@ -50,15 +50,15 @@ stats.Area <- function(AniObj, graphs=FALSE, verbose=TRUE) {
 
   # Descriptive statistics
   o = sapply(seq_along(AniObj@Area), function(i) {
-    P <- AniObj@Area[[i]]$coords
-    if (!all(P[1, ] == P[nrow(P), ])) P <- rbind(P, P[1, ])
-    n <- nrow(P) - 1L; IN <- ED <- logical(length(vx)); eps <- 1e-9
+    P=AniObj@Area[[i]]$coords
+    if (!all(P[1, ] == P[nrow(P), ])) P=rbind(P, P[1, ])
+    n=nrow(P) - 1L; IN=ED=logical(length(vx)); eps=1e-9
     for (j in 1:n) {
-      x1 <- P[j,1]; y1 <- P[j,2]; x2 <- P[j+1,1]; y2 <- P[j+1,2]
-      ED <- ED | (abs((vx - x1)*(y2 - y1) - (vy - y1)*(x2 - x1)) < eps &
+      x1=P[j,1]; y1=P[j,2]; x2=P[j+1,1]; y2=P[j+1,2]
+      ED=ED | (abs((vx - x1)*(y2 - y1) - (vy - y1)*(x2 - x1)) < eps &
                     vx >= pmin(x1, x2) - eps & vx <= pmax(x1, x2) + eps &
                     vy >= pmin(y1, y2) - eps & vy <= pmax(y1, y2) + eps)
-      IN <- xor(IN, ((y1 > vy) != (y2 > vy)) &
+      IN=xor(IN, ((y1 > vy) != (y2 > vy)) &
                   (vx < (x2 - x1) * (vy - y1) / (y2 - y1) + x1))
     }
     sum(IN | ED)

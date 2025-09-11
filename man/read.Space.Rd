@@ -15,17 +15,18 @@ read.Space(
   y.col = "y",
   TRes = 1,
   Temp.sort = TRUE,
-  na.strings = "NA"
+  na.strings = "NA",
+  verbose = TRUE
 )
 }
 \arguments{
 \item{path}{A string containing the location and full name of the file to load.}
 
-\item{type}{A variable indicating the type of file to be loaded: \code{csv} or \code{json} (\emph{Default: csv}).}
+\item{type}{A variable indicating the type of file to be loaded: \code{csv} (comma (,) separated), \code{json} or \code{json.gz} (\emph{Default: csv}).}
 
 \item{header}{A logical variable specifying if the animal information file contains headers  (\emph{Default: TRUE}).}
 
-\item{col.names}{A character string containing the name for the columns in the file.}
+\item{col.names}{A character string containing the new names of the columns in the file; they are assigned automatically after the file has been read.}
 
 \item{Time.col}{A character variable specifying the name of the column containing the temporal information in epoch format in the file (\emph{Default: "Time"}).}
 
@@ -39,7 +40,9 @@ read.Space(
 
 \item{Temp.sort}{A variable indicating whether the \code{load.Space} function should (TRUE) or should not (FALSE) sort the spatio-temporal information by \code{ID.col} and \code{Time.col} (\emph{Default: TRUE}).}
 
-\item{na.strings}{Astring to interpret as missing values, passed to read.csv() (\emph{Default: "NA"}).}
+\item{na.strings}{A string to interpret as missing values, passed to read.csv() (\emph{Default: "NA"}).}
+
+\item{verbose}{A logical variable specifying whether to print informative messages (\emph{Default: TRUE}).}
 }
 \value{
 An AniSpace object

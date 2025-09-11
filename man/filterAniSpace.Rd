@@ -47,7 +47,7 @@ df.Time.filt=filterAniSpace(df,TimeWindow=c(Tmin,Tmax))
 df.Time.filt
 
 # Filter positions from the resting area
-df.Area.filt=filterAniSpace(df,Area=c(1:5))
+df.Area.filt=filterAniSpace(df,Area=names(df@Area)[c(1:5)])
 df.Area.filt
 
 
