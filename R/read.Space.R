@@ -4,9 +4,9 @@
 #' `read.Space()` load the individual temporal-spatial information into the R environment.
 #'
 #' @param path A string containing the location and full name of the file to load.
-#' @param type A variable indicating the type of file to be loaded: `csv` or `json` (*Default: csv*).
+#' @param type A variable indicating the type of file to be loaded: `csv` (comma (,) separated), `json` or `json.gz` (*Default: csv*).
 #' @param header A logical variable specifying if the animal information file contains headers  (*Default: TRUE*).
-#' @param col.names A character string containing the name for the columns in the file.
+#' @param col.names A character string containing the new names of the columns in the file; they are assigned automatically after the file has been read.
 #' @param Time.col A character variable specifying the name of the column containing the temporal information in epoch format in the file (*Default: "Time"*).
 #' @param ID.col A character variable specifying the name of the column containing the animal ID information in the file (*Default: "ID"*).
 #' @param x.col A character variable specifying the name of the column containing the spatial x-axis information in the file (*Default: "x"*).
@@ -19,19 +19,23 @@
 #'
 #' @return An AniSpace object
 #'
+#' @importFrom data.table fread
+#' @importFrom utils read.csv
+#' @importFrom jsonlite stream_in
+#'
 #' @examples
 #' df=read.Space(path="data/positions.csv", type="csv")
 #' df
 #'
 #' @export
 
-read.Space <- function(path, type="csv",
+read.Space=function(path, type="csv",
                         header=TRUE, col.names=NULL,
                         Time.col="Time", ID.col="ID", x.col="x", y.col="y", TRes=1,
                         Temp.sort=TRUE, na.strings="NA") {
   # Control parameters
   if(!file.exists(path))     stop(paste0("File: ",path," not found"))
-  if(!any(type==c("csv","json"))) stop("Value of `type` unrecognised")
+  if(!any(type==c("csv","json","json.gz"))) stop("Value of `type` unrecognised")
   if(!is.logical(header))    stop("`header` value must be logical")
   if(!is.null(col.names) & !is.character(col.names)) stop("`col.names` must be character")
   if(!all(is.character(Time.col), is.character(ID.col), is.character(x.col), is.character(y.col)))  stop("Column names (*.col) must be characters")
@@ -53,7 +57,14 @@ read.Space <- function(path, type="csv",
       )
     }
   } else  if(type=="json") {
-    stop("Option not implemented in this version")
+    obj=suppressMessages(suppressWarnings(jsonlite::stream_in(path, verbose = F)))
+    obj=cbind(obj[,c(Time.col,ID.col)],obj[,"coordinates"][,c("x","y")])
+    colnames(obj)=c(Time.col,ID.col,"coordinates.x","coordinates.y")
+
+  } else  if(type=="json.gz") {
+    obj=suppressMessages(suppressWarnings(jsonlite::stream_in(gzfile(path), verbose = F)))
+    obj=cbind(obj[,c(Time.col,ID.col)],obj[,"coordinates"][,c("x","y")])
+    colnames(obj)=c(Time.col,ID.col,"coordinates.x","coordinates.y")
   }
 
   # Rename columns

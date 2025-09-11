@@ -21,7 +21,7 @@
 #' @export
 #'
 
-stats.Pos <- function(AniObj, graphs=FALSE, verbose=TRUE) {
+stats.Pos=function(AniObj, graphs=FALSE, verbose=TRUE) {
 
   # Control parameters
   if (!inherits(AniObj, "AniSpace")) stop("`AniObj` must be class 'AniSpace'.")
@@ -35,9 +35,9 @@ stats.Pos <- function(AniObj, graphs=FALSE, verbose=TRUE) {
 
     if (a < 2L) {
       return(data.frame(NIDs = i, IDs = AniObj@IDs[i], npositions = a,
-                        min_x=NA, max_x=NA, min_y= NA, max_y=NA,
+                        min_x=p$x, max_x=p$x, min_y= p$y, max_y=p$y, median_x=NA, median_y=NA,
                         Time_range=NA, mean_Time_step=NA,
-                        total_dist=NA ,mean_speed=NA, max_speed=NA))}
+                        total_dist=NA ,total_area=NA,mean_speed=NA, max_speed=NA))}
 
     dt=diff(as.numeric(p$Time))
     dx=diff(as.numeric(p$x))
@@ -50,6 +50,7 @@ stats.Pos <- function(AniObj, graphs=FALSE, verbose=TRUE) {
     ok <- is.finite(speed) & is.finite(dist) & dt > 0
     return(data.frame(NIDs = i, IDs = AniObj@IDs[i], npositions = a,
                       min_x=min(p$x), max_x=max(p$x), min_y=min(p$y), max_y=max(p$y),
+                      median_x=median(p$x), median_y=median(p$y),
                       Time_range=as.numeric(max(p$Time), min(p$Time)),
                       mean_Time_step=mean(dt, na.rm=TRUE),
                       total_dist=sum(dist[ok], na.rm = TRUE),

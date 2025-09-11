@@ -1,7 +1,8 @@
 #' Rebase AniSpace object
 #'
 #' @description
-#' `rebase()` Rebase AniSpace object.
+#' `rebase()` Reorganizes or redefines the reference system of an `AniSpace` object,
+#' aligning positional or temporal data to a new baseline.
 #'
 #' @param AniObj An AniSpace object
 #'
@@ -10,11 +11,12 @@
 #'
 #' @export
 #'
+#'
 rebase=function(AniObj){
   # Rebase NIDs
-  if(min(AniObj@NIDs)>1){
-    AniObj@NIDs=AniObj@NIDs-min(AniObj@NIDs)+1
-  }
+  #if(min(AniObj@NIDs)>1){
+    AniObj@NIDs=1:length(AniObj@IDs)
+  #}
 
   # Rebase Time
   vt=unlist(lapply(AniObj@Pos, function(p) p$Time), use.names = FALSE)
