@@ -35,12 +35,12 @@
 #'
 #' @export
 
-load.Area <- function(AniObj, AreaObj, ID.col="ID", verbose=TRUE) {
+load.Area <- function(AniObj, AreaObj, verbose=TRUE) {
 
   # Control parameters
-  if (!inherits(AniObj, "AniSpace")) stop("`AniObj` must be class 'AniSpace'.")
-  if( !validate(AniObj))             stop("Invalid `AniObj` object.")
-  if(!is.list(AreaObj))              stop("`AreaObj` must be a list")
+  if(!inherits(AniObj, "AniSpace")) stop("`AniObj` must be class 'AniSpace'.")
+  if(!validate(AniObj))             stop("Invalid `AniObj` object.")
+  if(!is.list(AreaObj))             stop("`AreaObj` must be a list")
 
 
   # Verify the content of the list

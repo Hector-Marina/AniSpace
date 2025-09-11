@@ -1,4 +1,4 @@
-# AniSpace v0.0.1
+# AniSpace v0.0.2
 
 ![AniSpace Logo](logo/logo.jpg)
 
@@ -12,7 +12,7 @@ designed for **high-resolution position data** and supports workflows such as:
 -   Filtering, interpolating and refining location data
 -   Deriving the precision of the positioning system
 -   Deriving movement metrics (speed, step length, turning angles)
--   Estimating entity-entity and entity--environment spatial interactions
+-   Estimating entity-entity and entity-environment spatial interactions
 -   Estimating space use (areas, paths, home ranges)
 
 🔗 **Official projects supporting the development of this package**:
@@ -25,7 +25,7 @@ designed for **high-resolution position data** and supports workflows such as:
 
 📍 **Place**: SLU, Uppsala, Sweden
 
-📅 **Full release data**: 1 November 2025
+📅 **Full release data**: 1 December 2025
 
 ![Cat coding](https://raw.githubusercontent.com/fate0/fate0/master/artwork/pusheencode.gif)
 
@@ -42,7 +42,7 @@ remotes::install_github("Hector-Marina/AniSpace")
 
 ## Learn more
 
-If you want to learn how to use the `AniSpace` R package with real data, download and follow our example code ([examples](https://github.com/Hector-Marina/AniSpace/examples.html)) for a step-by-step walkthrough with code and results.
+If you want to learn how to use the `AniSpace` R package with real data, download and follow our example code ([examples](https://github.com/Hector-Marina/AniSpace/tree/main/vignettes)) for a step-by-step walkthrough with code and results.
 
 ------------------------------------------------------------------------
 
@@ -50,11 +50,11 @@ If you want to learn how to use the `AniSpace` R package with real data, downloa
 
 In alphabetical order:
 
--   Hector Marina [![ORCID iD](https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png)](https://orcid.org/0000-0001-9226-2902)**(Maintainer)**
+-   Hector Marina [![ORCID iD](https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png)](https://orcid.org/0000-0001-9226-2902) **(Maintainer)**
 
--   Ida Hansson ![ORCID iD](https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png)
+-   Ida Hansson [![ORCID iD](https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png)](https://orcid.org/0000-0001-7877-4135)
 
--   Keni Ren ![ORCID iD](https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png)
+-   Keni Ren [![ORCID iD](https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png)](https://orcid.org/0000-0003-2817-5331)
 
 -   Lars Rönnegård [![ORCID iD](https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png)](https://orcid.org/0000-0002-1057-5401)
 

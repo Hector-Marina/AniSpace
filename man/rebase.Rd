@@ -10,7 +10,8 @@ rebase(AniObj)
 \item{AniObj}{An AniSpace object}
 }
 \description{
-\code{rebase()} Rebase AniSpace object.
+\code{rebase()} Reorganizes or redefines the reference system of an \code{AniSpace} object,
+aligning positional or temporal data to a new baseline.
 }
 \examples{
 df=rebase(df)

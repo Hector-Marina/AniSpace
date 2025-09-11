@@ -7,10 +7,12 @@
 validate(AniObj)
 }
 \arguments{
-\item{AniObj}{An AniSpace object}
+\item{AniObj}{Performs a series of integrity and quality-control checks on an
+\code{AniSpace} object or dataset, ensuring that positional, animal,
+and area data meet expected structural and logical criteria.}
 }
 \description{
-\code{validate()} validate AniSpace object's information
+\code{validate()} Verifies and Consistency Checks for AniSpace Objects
 }
 \examples{
 validate(df)

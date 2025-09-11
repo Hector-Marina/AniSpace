@@ -4,7 +4,7 @@
 \alias{load.Area}
 \title{Load areas' information}
 \usage{
-load.Area(AniObj, AreaObj, ID.col = "ID", verbose = TRUE)
+load.Area(AniObj, AreaObj, verbose = TRUE)
 }
 \arguments{
 \item{AniObj}{An AniSpace object containing the spatio-temporal information of the individuals.}

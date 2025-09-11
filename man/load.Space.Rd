@@ -11,7 +11,8 @@ load.Space(
   x.col = "x",
   y.col = "y",
   TRes = 1,
-  Temp.sort = TRUE
+  Temp.sort = TRUE,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ load.Space(
 \item{TRes}{A numeric variable indicating the time resolution/frequency of the positions (\emph{Default: 1 sec}).}
 
 \item{Temp.sort}{A variable indicating whether the \code{load.Space} function should (TRUE) or should not (FALSE) sort the spatio-temporal information by \code{ID.col} and \code{Time.col} (\emph{Default: TRUE}).}
+
+\item{verbose}{A logical variable specifying whether to print informative messages (\emph{Default: TRUE}).}
 }
 \value{
 An AniSpace object
