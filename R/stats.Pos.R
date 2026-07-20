@@ -9,7 +9,7 @@
 #'
 #' @keywords descriptive statistics spatial position information
 #'
-#' @return Descriptive statistics of the temporal-spatial information detailed in the AniSpace object.
+#' @return Descriptive statistics of the temporal-spatial information detailed in the `AniSpace` object.
 #'
 #' @examples
 #' df.stats.Pos=stats.Pos(AniObj=df, graphs=TRUE)
@@ -149,7 +149,7 @@ stats.Pos=function(AniObj, graphs=FALSE, verbose=TRUE) {
     dsf[["graphs"]]=graphs
 
     if (verbose) message(" - See the `obj$graphs` section for a depiction of the parameters' distribution.
-  The dotted red and green lines represent the mean and median, respectively.")
+   The dotted red and green lines represent the mean and median, respectively.")
 
   }else{
     dsf=as.data.frame(sf)

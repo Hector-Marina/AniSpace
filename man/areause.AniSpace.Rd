@@ -14,7 +14,7 @@ areause.AniSpace(
 )
 }
 \arguments{
-\item{AniObj}{AAn AniSpace object containing the spatio-temporal information of the individuals.}
+\item{AniObj}{An AniSpace object containing the spatio-temporal information of the individuals.}
 
 \item{method}{A variable indicating the  selected analysis method (\code{InOut} or \code{TimeBudget}) (Default: \emph{method="TimeBudget"}). \code{InOut} reports the entrance and exist time of each individual in each area included in the object. \code{TimeBudget} reports the individuals' time spent in each area.}
 

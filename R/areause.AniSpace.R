@@ -3,7 +3,7 @@
 #' @description
 #' `areause.AniSpace` estimates individuals' area occupation periods and time budgets statistics.
 #'
-#' @param AniObj AAn AniSpace object containing the spatio-temporal information of the individuals.
+#' @param AniObj An AniSpace object containing the spatio-temporal information of the individuals.
 #' @param method A variable indicating the  selected analysis method (`InOut` or `TimeBudget`) (Default: *method="TimeBudget"*). `InOut` reports the entrance and exist time of each individual in each area included in the object. `TimeBudget` reports the individuals' time spent in each area.
 #' @param t.lim A numeric variable indicating the time limit for considering an area occupied (*Default: 600*).
 #' @param t.err A numeric variable indicating the time error than some positions could fall outside the area within the `t.lim` interval (*Default: 5% of t.lim*).
@@ -49,7 +49,7 @@ areause.AniSpace=function(AniObj, Area=NULL, method="TimeBudget", t.lim=600, t.e
   if(!is.numeric(t.lim))  stop("`t.lim` is not numeric")
   if(!is.numeric(t.err))  stop("`t.err` is not numeric")
 
-  if(!is.logical(verbose))  stop("`verbose` is not llogical")
+  if(!is.logical(verbose))  stop("`verbose` is not logical")
 
   if (method=="TimeBudget"){
     if(verbose) message("Estimating the time budget in the areas...")

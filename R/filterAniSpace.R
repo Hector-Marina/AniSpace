@@ -8,7 +8,8 @@
 #' @param IDs  Character variable or vector containing the identification of the individuals (*Default: NULL*).
 #' @param TimeWindow A numeric vector indicating the limits (minimum and maximum) of the time window to be maintained (*Default: NULL*).
 #' @param Area A character variable or vector indicating the areas for which time/position data will be preserved (*Default: ALL*).
-#' @param soft.boundaries A numeric variable indicating the distance threshold allowed outside the boundaries that will be brought back to the boundaries. The position reported after this threshold will be filtered (e.g. *soft.boundaries=2*; in the same unit of measurement that corresponds to the data (e.g. metres, centimetres, etc.) (*Default: 0*).
+#' @param soft.boundaries A non-negative numeric value specifying the maximum distance outside an area's boundary at which positions are still retained (*Default: 0*).
+#' @param bring.back A logical value indicating whether positions located outside the selected area should be moved inside the boundaries of that single area (*Default: FALSE*).
 #' @param verbose A logical variable specifying whether to print informative messages (*Default: TRUE*).
 #'
 #' @keywords filter animal temporal spatial position information
@@ -33,17 +34,19 @@
 #'
 #' @export
 
-filterAniSpace=function(AniObj, NIDs=NULL, IDs=NULL, TimeWindow=NULL, Area=NULL, soft.boundaries=0, verbose=TRUE) {
+filterAniSpace=function(AniObj, NIDs=NULL, IDs=NULL, TimeWindow=NULL, Area=NULL, soft.boundaries=0, bring.back=FALSE ,verbose=TRUE) {
   # Control parameters
   if (!inherits(AniObj, "AniSpace")) stop("`AniObj` must be class 'AniSpace'.")
   if( !validate(AniObj))             stop("Invalid `AniObj` object.")
 
+
+  if (length(AniObj@NIDs) == 0L || length(AniObj@IDs) == 0L) stop("No individuals were found in `AniObj`.")
   if (is.null(NIDs) && is.null(IDs)) {
     NIDs=AniObj@NIDs
   } else if (is.null(NIDs) & !is.null(IDs)) {
     NIDs=which(AniObj@IDs %in% IDs)
   }
-  if(!any(NIDs%in%AniObj@NIDs))stop("Individuals not found in `AniObj`")
+  if(!any(NIDs%in%AniObj@NIDs)) stop("`Individual` not found in `AniObj`")
 
   if(!is.null(TimeWindow)){
     if(!length(TimeWindow)==2)        stop("`TimeWindow` must contain the minimum and the maximum of the time window to be kept")
@@ -53,15 +56,22 @@ filterAniSpace=function(AniObj, NIDs=NULL, IDs=NULL, TimeWindow=NULL, Area=NULL,
   }
 
   if(!is.null(Area)){
-    if(!is.character(Area))                       stop("`Area` must be class character")
+    if (length(AniObj@Area) == 0L)    stop("No areas were found in `AniObj`.")
+    if(!is.character(Area))           stop("`Area` must be class character")
     l=sapply(seq_along(AniObj@Area), function(ii) {AniObj@Area[[ii]]$ID})
-    if(!any(Area%in%l))          stop("`Area` not found in AniSpace object")
+    if(!any(Area%in%l))               stop("`Area` not found in AniSpace object")
     NArea=which(l%in%Area)
   }
 
   if(!is.null(soft.boundaries)){
-    if(!is.numeric(soft.boundaries))       stop("`soft.boundaries` must be class numeric")
+    if (!is.numeric(soft.boundaries) || length(soft.boundaries) != 1L ||
+        !is.finite(soft.boundaries)  || soft.boundaries < 0) stop("`soft.boundaries` must be class numeric")
   }
+  if(!is.logical(bring.back))            stop("`bring.back` must be logical")
+  if (bring.back && is.null(Area))       stop("An area must be selected when `bring.back = TRUE`.")
+  if (bring.back && length(NArea) != 1L) stop("Only one area can be selected when `bring.back = TRUE`.")
+
+
   if(!is.logical(verbose))     stop("`verbose` must be logical")
 
   #1)--- Filter individuals (NIDs)
@@ -139,10 +149,57 @@ filterAniSpace=function(AniObj, NIDs=NULL, IDs=NULL, TimeWindow=NULL, Area=NULL,
       In=if (length(In_mat) == 0L) rep(FALSE, length(vx)) else if (is.list(In_mat) && !is.matrix(In_mat)) Reduce(`|`, In_mat) else rowSums(as.matrix(In_mat) != 0) > 0L
       AniObj@Pos[[ii]][c("Time", "x", "y")]=lapply(AniObj@Pos[[ii]][c("Time", "x", "y")], `[`, In)
     }
+
+
+    if (bring.back) {
+      if (verbose) message("- Moving positions within `soft.boundaries` to the nearest boundary of area: ", Area,".")
+
+      AniObj@Pos <- lapply(seq_along(AniObj@Pos), function(i) {
+        p <- AniObj@Pos[[i]]
+        vx <- p$x
+        vy <- p$y
+        P <- as.matrix(AniObj@Area[[NArea[1L]]]$coords)
+
+        # Close polygon
+        if (!all(P[1L, 1:2] == P[nrow(P), 1:2]))
+          P <- rbind(P, P[1L, ])
+
+        z <- lapply(seq_len(nrow(P) - 1L), function(j) {
+          x1 <- P[j, 1];      y1 <- P[j, 2]
+          dx <- P[j + 1L, 1] - x1
+          dy <- P[j + 1L, 2] - y1
+          d2 <- dx^2 + dy^2
+
+          cross <- ((y1 > vy) != (y1 + dy > vy)) &
+            (vx < x1 + dx * (vy - y1) / dy)
+
+          t <- if (d2 > 0) pmin(1, pmax(0, ((vx - x1) * dx + (vy - y1) * dy) / d2)) else 0
+          cx <- x1 + t * dx
+          cy <- y1 + t * dy
+
+          list(IN = cross, x = cx, y = cy, d2 = (vx - cx)^2 + (vy - cy)^2)
+        })
+
+        IN <- rowSums(do.call(cbind, lapply(z, `[[`, "IN")), na.rm = TRUE) %% 2L == 1L
+        D  <- do.call(cbind, lapply(z, `[[`, "d2"))
+        X  <- do.call(cbind, lapply(z, `[[`, "x"))
+        Y  <- do.call(cbind, lapply(z, `[[`, "y"))
+
+        D[!is.finite(D)] <- Inf
+        jj <- max.col(-D, ties.method = "first")
+        ij <- cbind(seq_along(vx), jj)
+        move <- !IN & is.finite(D[ij]) & D[ij] <= soft.boundaries^2
+
+        p$x[move] <- X[ij][move]
+        p$y[move] <- Y[ij][move]
+
+        p
+      })
+    }
   }
 
 
-  #1)--- Remove NIDs that has no position data after the filtering
+  #4)--- Remove NIDs that has no position data after the filtering
   l=sapply(seq_along(AniObj@Pos), function(ii) {length(AniObj@Pos[[ii]]$Time)})>0
   if(sum(l)==0) stop("No position information found after the filters were applied.")
 
