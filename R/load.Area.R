@@ -12,35 +12,24 @@
 #' @return An AniSpace object
 #'
 #' @examples
-#' # Create AniSpace object
-#' df=read.Space(path="data/positions.csv", type="csv")
+#' data(cows)
+#' AniObj=load.Space(cows$positions)
+#' AniObj=load.Info(AniObj,InfObj=cows$animals)
 #'
-#' # Add manually the information
-#' cf=list(
-#' list(ID="0",
-#'      coords=matrix(c(0,   0, 3340,  0, 3340,2902, 0,2902, 0,0), ncol=2, byrow=TRUE, dimnames=list(NULL,c("x","y"))),
-#'      color="beige"),
-#' list(ID="1",
-#'      coords=matrix(c(0,2902, 630,2902, 630,8738, 0,8738, 0,2902), ncol=2, byrow=TRUE, dimnames=list(NULL,c("x","y"))),
-#'      color="green"
-#' ))
+#' # Convert rectangular area information to polygons
+#' AreaObj=square2poly(cows$areas)
 #'
-#' # Reading the information from a file
-#' bf=read.csv("data/barnplan.csv", header=T)
-#' cf=square2poly(bf)
-#'
-#' # Adding information to the AniSpace object
-#' df=load.Info(AniObj=df, AreaObj=cf)
-#' df
+#' # Add area information to the AniSpace object
+#' AniObj=load.Area(AniObj,AreaObj)
 #'
 #' @export
 
 load.Area <- function(AniObj, AreaObj, verbose=TRUE) {
 
   # Control parameters
-  if(!inherits(AniObj, "AniSpace")) stop("`AniObj` must be class 'AniSpace'.")
-  if(!validate(AniObj))             stop("Invalid `AniObj` object.")
-  if(!is.list(AreaObj))             stop("`AreaObj` must be a list")
+  if (!inherits(AniObj, "AniSpace")) stop("`AniObj` must be class 'AniSpace'.")
+  if( !validate(AniObj))             stop("Invalid `AniObj` object.")
+  if(!is.list(AreaObj))              stop("`AreaObj` must be a list")
 
 
   # Verify the content of the list
@@ -80,6 +69,10 @@ load.Area <- function(AniObj, AreaObj, verbose=TRUE) {
       if (verbose) message("- No Area information has been added to the AniSpace object.")
     }
   }
+
+  # Validate filtered AniObj
+  VAL=validate(AniObj)
+  if(!VAL) stop("Loading area information produced an invalid `AniObj` object.")
 
   return(AniObj)
 }

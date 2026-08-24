@@ -39,11 +39,8 @@ An AniSpace object
 \code{load.Space()} transforms a data frame containing individual spatio-temporal information into the AniSpace format.
 }
 \examples{
-df=load.Space(data.frame)
-df
+data(cows)
+AniObj=load.Space(cows$positions)
+AniObj
 
 }
-\keyword{animal}
-\keyword{information}
-\keyword{spatial}
-\keyword{transform}

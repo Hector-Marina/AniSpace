@@ -6,8 +6,11 @@
 #'
 #' @param AniObj An AniSpace object
 #'
+#' @keywords internal
+#'
 #' @examples
-#' df=rebase(df)
+#' AniObj=rebase(AniObj)
+#' AniObj
 #'
 #' @export
 #'
@@ -31,6 +34,10 @@ rebase=function(AniObj){
     AniObj@Pos=l
 
   }
-  return(AniObj)
 
+  # Validate filtered AniObj
+  VAL=validate(AniObj)
+  if(!VAL) stop("rebase() produced an invalid `AniObj` object.")
+
+  return(AniObj)
 }

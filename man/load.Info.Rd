@@ -23,18 +23,11 @@ An AniSpace object
 by matching records in \code{InfObj} to \code{AniObj} using the identifier column \code{ID.col}.
 }
 \examples{
-# Create AniSpace object
-df=read.Space(path="data/positions.csv", type="csv")
+data(cows)
+AniObj=load.Space(cows$positions)
 
-# Reading the information from a file
-af=read.csv("data/animals.csv", header=T)
-
-# Adding information to the AniSpace object
-df=load.Info(AniObj=df, InfObj=af)
-df
+# Add individual information to the AniSpace object
+AniObj=load.Info(AniObj,InfObj=cows$animals)
+AniObj
 
 }
-\keyword{animal}
-\keyword{information}
-\keyword{load}
-\keyword{transform}

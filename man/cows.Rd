@@ -34,10 +34,10 @@ Typical columns:
 \describe{
 \item{\code{Date}}{Date when the information was recorded}
 \item{\code{ID}}{matches \code{positions$id}}
-\item{\code{Parity}}{integer: Number of births}
+\item{\code{Parity}}{factor: Number of births}
 \item{\code{DIM}}{integer: Days in milk}
 \item{\code{Breed}}{factor}
-\item{\code{Disease}}{Absence(0) or Presence (1)}
+\item{\code{Disease}}{factor: Absence(0) or Presence (1)}
 }}
 
 \item{\code{areas}}{Data frame describing the barn plan / polygons.

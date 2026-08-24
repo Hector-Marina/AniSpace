@@ -7,20 +7,23 @@
 #' @param graphs A logical variable indicates whether the graphs showing the descriptive statistics will be reported back (TRUE) or not (FALSE) (*Default: FALSE*).
 #' @param verbose A logical variable specifying whether to print informative messages (*Default: TRUE*).
 #'
-#' @keywords descriptive statistics area information
-#'
 #' @return Descriptive statistics of the areas detailed in the AniSpace object.
 #'
 #' @examples
-#' df.stats.Area=stats.Area(AniObj=df, graphs=FALSE)
+#' # Estimate descriptive statistics for the defined areas
+#' df.area=stats.Area(AniObj,graphs=FALSE,verbose=FALSE)
+#' head(df.area)
 #'
-#' head(df.stats.Area$DescriptiveStats)
+#' # Estimate descriptive statistics and generate the area plot
+#' df.area.graph=stats.Area(AniObj,graphs=TRUE,verbose=FALSE)
+#' head(df.area.graph$DescriptiveStats)
 #'
-#' df.stats.Area$graphs[[1]]
+#' # Display the stored area plot
+#' df.area.graph$graphs[[1]]
 #'
 #' @export
 
-stats.Area <- function(AniObj, graphs=FALSE, verbose=TRUE) {
+stats.Area=function(AniObj, graphs=FALSE, verbose=TRUE) {
 
   # Control parameters
   if (!inherits(AniObj, "AniSpace")) stop("`AniObj` must be class 'AniSpace'.")
@@ -89,9 +92,9 @@ stats.Area <- function(AniObj, graphs=FALSE, verbose=TRUE) {
 
     # Plot polygons
     for (jj in 1:length(AniObj@Area)) {
-      polygon(c(AniObj@Area[[jj]]$coords[,"x"]),
-              c(AniObj@Area[[jj]]$coords[,"y"]),
-              col = AniObj@Area[[jj]]$color)}
+      graphics::polygon(c(AniObj@Area[[jj]]$coords[,"x"]),
+                        c(AniObj@Area[[jj]]$coords[,"y"]),
+                        col = AniObj@Area[[jj]]$color)}
     graphs[["Area"]]=grDevices::recordPlot()
 
   }else{

@@ -12,23 +12,21 @@
 #' @param bring.back A logical value indicating whether positions located outside the selected area should be moved inside the boundaries of that single area (*Default: FALSE*).
 #' @param verbose A logical variable specifying whether to print informative messages (*Default: TRUE*).
 #'
-#' @keywords filter animal temporal spatial position information
-#'
 #' @return A filtered animal position object
 #'
 #' @examples
 #' # Filter five individuals
-#' df.ID.filt=filterAniSpace(df,NIDs=c(1:5))
+#' df.ID.filt=filterAniSpace(AniObj,NIDs=c(1:5))
 #' df.ID.filt
 #'
 #' # Filter a specific time window
 #' Tmin=as.numeric(as.POSIXct("2020-10-16 11:00:00", format = "%Y-%m-%d %H:%M:%S", tz = "UTC"))
 #' Tmax=as.numeric(as.POSIXct("2020-10-16 11:59:59", format = "%Y-%m-%d %H:%M:%S", tz = "UTC"))
-#' df.Time.filt=filterAniSpace(df,TimeWindow=c(Tmin,Tmax))
+#' df.Time.filt=filterAniSpace(AniObj,TimeWindow=c(Tmin,Tmax))
 #' df.Time.filt
 #'
 #' # Filter positions from the resting area
-#' df.Area.filt=filterAniSpace(df,Area=names(df@Area)[c(1:5)])
+#' df.Area.filt=filterAniSpace(AniObj,Area=names(AniObj@Area)[c(1:5)])
 #' df.Area.filt
 #'
 #'
@@ -198,7 +196,6 @@ filterAniSpace=function(AniObj, NIDs=NULL, IDs=NULL, TimeWindow=NULL, Area=NULL,
     }
   }
 
-
   #4)--- Remove NIDs that has no position data after the filtering
   l=sapply(seq_along(AniObj@Pos), function(ii) {length(AniObj@Pos[[ii]]$Time)})>0
   if(sum(l)==0) stop("No position information found after the filters were applied.")
@@ -217,12 +214,68 @@ filterAniSpace=function(AniObj, NIDs=NULL, IDs=NULL, TimeWindow=NULL, Area=NULL,
     AniObj@Pos=AniObj@Pos[l]
   }
 
+  #5)--- If exists filter or reset SI, UD and UDsim objects
+  if(!is.null(TimeWindow) || !is.null(Area)){
+
+    if(length(AniObj@SI)>0L){
+      if(verbose)
+        message("- Removing spatial-interaction information after filtering positions.")
+      AniObj@SI=list()
+    }
+
+    if(length(AniObj@UD)>0L){
+      if(verbose)
+        message("- Removing utilisation-distribution information after filtering positions.")
+      AniObj@UD=list()
+    }
+
+    if(length(AniObj@UDsim)>0L){
+      if(verbose)
+        message("- Removing utilisation-distribution similarity information after filtering positions.")
+      AniObj@UDsim=list()
+    }
+
+  }else{
+    if(length(AniObj@SI)>0L){
+      if(length(AniObj@NIDs)<ncol(AniObj@SI$M)){
+        AniObj@SI$M=AniObj@SI$M[
+          AniObj@NIDs,
+          AniObj@NIDs,
+          drop=FALSE
+        ]
+      }
+    }
+
+    if(length(AniObj@UD)>0L){
+      if(length(AniObj@UD$parameters$href)>1L &&
+         length(AniObj@NIDs)<length(AniObj@UD$parameters$href)){
+        AniObj@UD$parameters$href=
+          AniObj@UD$parameters$href[AniObj@NIDs]
+      }
+
+      if(length(AniObj@UD$UD)>0L &&
+         length(AniObj@NIDs)<length(AniObj@UD$UD)){
+        AniObj@UD$UD=AniObj@UD$UD[AniObj@NIDs]
+      }
+    }
+
+    if(length(AniObj@UDsim)>0L){
+      if(length(AniObj@NIDs)<ncol(AniObj@UDsim$M)){
+        AniObj@UDsim$M=AniObj@UDsim$M[
+          AniObj@NIDs,
+          AniObj@NIDs,
+          drop=FALSE
+        ]
+      }
+    }
+  }
+
   # Rebase NIDs and Time variables
   AniObj=rebase(AniObj)
 
   # Validate filtered AniObj
   VAL=validate(AniObj)
-  if(!VAL) stop("Invalid `AniObj` object.")
+  if(!VAL) stop("The filtered results produced an invalid `AniObj` object.")
 
   return(AniObj)
 }

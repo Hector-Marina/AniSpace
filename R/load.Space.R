@@ -12,13 +12,12 @@
 #' @param Temp.sort A variable indicating whether the `load.Space` function should (TRUE) or should not (FALSE) sort the spatio-temporal information by `ID.col` and `Time.col` (*Default: TRUE*).
 #' @param verbose A logical variable specifying whether to print informative messages (*Default: TRUE*).
 #'
-#' @keywords transform animal spatial information
-#'
 #' @return An AniSpace object
 #'
 #' @examples
-#' df=load.Space(data.frame)
-#' df
+#' data(cows)
+#' AniObj=load.Space(cows$positions)
+#' AniObj
 #'
 #' @export
 
@@ -26,8 +25,13 @@ load.Space <- function(PosObj, Time.col="Time", ID.col="ID", x.col="x", y.col="y
   # Control parameters
   if(!is.data.frame(PosObj)) stop("`PosObj` must be a data.frame.")
   if(!all(is.character(Time.col), is.character(ID.col), is.character(x.col), is.character(y.col)))  stop("Column names (*.col) must be non-empty character scalars.")
-  if(!is.numeric(TRes))      stop("`TRes` must be a positive, finite numeric scalar (seconds)")
-  if(!is.logical(Temp.sort)) stop("`Temp.sort` must be a single logical value")
+
+  if (!is.numeric(TRes) || length(TRes) != 1L ||
+      !is.finite(TRes)  || TRes <= 0 ) stop("`TRes` must be a positive, finite numeric scalar (seconds)")
+
+  if (!is.logical(Temp.sort) || length(Temp.sort) != 1L || is.na(Temp.sort)) stop("`Temp.sort` must be either TRUE or FALSE.")
+  if (!is.logical(verbose) || length(verbose) != 1L || is.na(verbose)) stop("`verbose` must be either TRUE or FALSE.")
+
 
   # Check column names
   if(!any(Time.col==colnames(PosObj))) stop("Missing required column: Time.col")
@@ -43,8 +47,8 @@ load.Space <- function(PosObj, Time.col="Time", ID.col="ID", x.col="x", y.col="y
 
   # Check data content
   if(!all(is.numeric(PosObj[,Time.col]),  is.numeric(PosObj[,x.col]), is.numeric(PosObj[,y.col]))) stop("Time and coordinates must be numeric")
-  if(sum(!complete.cases(PosObj))>0){
-    PosObj=PosObj[complete.cases(PosObj),]
+  if(sum(!stats::complete.cases(PosObj))>0){
+    PosObj=PosObj[stats::complete.cases(PosObj),]
     if(verbose) message(paste("Missing values were filtered from:", path))
   }
 
@@ -67,13 +71,22 @@ load.Space <- function(PosObj, Time.col="Time", ID.col="ID", x.col="x", y.col="y
 
 
   # Create the AniSpace object
-  obj=new("AniSpace",
+  obj=methods::new("AniSpace",
           NIDs = 1:length(unique(PosObj[,ID.col])),
           IDs  = as.character(unique(PosObj[,ID.col])),
           Info = list(),
           TLim = TLim,
           TRes = TRes,
           Pos  = Pos,
-          Area = list())
+          Area = list(),
+          SI = list(),
+          UD = list(),
+          UDsim = list()
+          )
+
+  # Validate filtered AniObj
+  VAL=validate(obj)
+  if(!VAL) stop("Loading spatial information produced an invalid `AniObj` object.")
+
   return(obj)
 }

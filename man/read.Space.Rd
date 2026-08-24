@@ -51,14 +51,17 @@ An AniSpace object
 \code{read.Space()} load the individual temporal-spatial information into the R environment.
 }
 \examples{
-df=read.Space(path="data/positions.csv", type="csv")
-df
+data(cows)
+
+# Create a temporary position file
+file=tempfile(fileext=".csv")
+utils::write.csv(cows$positions,file,row.names=FALSE)
+
+# Read position information into an AniSpace object
+AniObj=read.Space(file,type="csv")
+AniObj
+
+# Remove temporary file
+unlink(file)
 
 }
-\keyword{animal}
-\keyword{csv}
-\keyword{information}
-\keyword{json}
-\keyword{load}
-\keyword{read}
-\keyword{spatial}

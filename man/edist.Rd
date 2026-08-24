@@ -22,12 +22,15 @@ a vector with the Euclidean distance information corresponding to the input valu
 \code{edist} estimate euclidean distance between temporal-position information
 }
 \examples{
+set.seed(123)
+
+x1=runif(10,0,10)
+y1=runif(10,0,10)
+x2=runif(10,0,10)
+y2=runif(10,0,10)
+
 euclidean.dist=edist(x1,y1,x2,y2)
 head(euclidean.dist)
 
 }
-\keyword{distance}
-\keyword{euclidean}
-\keyword{information}
-\keyword{spatial}
-\keyword{temporal}
+\keyword{internal}

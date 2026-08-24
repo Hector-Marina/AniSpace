@@ -14,21 +14,21 @@ stats.Pos(AniObj, graphs = FALSE, verbose = TRUE)
 \item{verbose}{A logical variable specifying whether to print informative messages (\emph{Default: TRUE}).}
 }
 \value{
-Descriptive statistics of the temporal-spatial information detailed in the AniSpace object.
+Descriptive statistics of the temporal-spatial information detailed in the \code{AniSpace} object.
 }
 \description{
 \code{stats.Pos} estimates the descriptive statistics of the temporal and spatial information contained within the position object at an individual level.
 }
 \examples{
-df.stats.Pos=stats.Pos(AniObj=df, graphs=TRUE)
+# Estimate descriptive statistics of the position information
+df.pos=stats.Pos(AniObj,graphs=FALSE,verbose=FALSE)
+head(df.pos)
 
-head(df.stats.Pos$DescriptiveStats)
+# Estimate descriptive statistics and generate distribution plots
+df.pos.graph=stats.Pos(AniObj,graphs=TRUE,verbose=FALSE)
+head(df.pos.graph$DescriptiveStats)
 
-df.stats.Pos$graphs[[1]]
+# Display the stored X-coordinate distribution
+df.pos.graph$graphs[["X-axis_Dist"]]
 
 }
-\keyword{descriptive}
-\keyword{information}
-\keyword{position}
-\keyword{spatial}
-\keyword{statistics}

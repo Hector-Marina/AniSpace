@@ -7,16 +7,19 @@
 #' @param graphs A logical variable indicates whether the graphs showing the descriptive statistics will be reported back (TRUE) or not (FALSE) (*Default: FALSE*).
 #' @param verbose A logical variable specifying whether to print informative messages (*Default: TRUE*).
 #'
-#' @keywords descriptive statistics spatial position information
-#'
 #' @return Descriptive statistics of the temporal-spatial information detailed in the `AniSpace` object.
 #'
 #' @examples
-#' df.stats.Pos=stats.Pos(AniObj=df, graphs=TRUE)
+#' # Estimate descriptive statistics of the position information
+#' df.pos=stats.Pos(AniObj,graphs=FALSE,verbose=FALSE)
+#' head(df.pos)
 #'
-#' head(df.stats.Pos$DescriptiveStats)
+#' # Estimate descriptive statistics and generate distribution plots
+#' df.pos.graph=stats.Pos(AniObj,graphs=TRUE,verbose=FALSE)
+#' head(df.pos.graph$DescriptiveStats)
 #'
-#' df.stats.Pos$graphs[[1]]
+#' # Display the stored X-coordinate distribution
+#' df.pos.graph$graphs[["X-axis_Dist"]]
 #'
 #' @export
 #'
@@ -27,6 +30,8 @@ stats.Pos=function(AniObj, graphs=FALSE, verbose=TRUE) {
   if (!inherits(AniObj, "AniSpace")) stop("`AniObj` must be class 'AniSpace'.")
   if( !validate(AniObj))             stop("Invalid `AniObj` object.")
 
+  if (!is.logical(graphs)  || length(graphs) != 1L  || is.na(graphs))  stop("`graphs` must be either TRUE or FALSE.")
+  if (!is.logical(verbose) || length(verbose) != 1L || is.na(verbose)) stop("`verbose` must be either TRUE or FALSE.")
 
   # Descriptive statistics
   l=lapply(seq_along(AniObj@Pos), function(i) {
@@ -50,7 +55,7 @@ stats.Pos=function(AniObj, graphs=FALSE, verbose=TRUE) {
     ok=is.finite(speed) & is.finite(dist) & dt > 0
     return(data.frame(NIDs = i, IDs = AniObj@IDs[i], npositions = a,
                       min_x=min(p$x), max_x=max(p$x), min_y=min(p$y), max_y=max(p$y),
-                      median_x=median(p$x), median_y=median(p$y),
+                      median_x=stats::median(p$x), median_y=stats::median(p$y),
                       Time_range=as.numeric(max(p$Time), min(p$Time)),
                       mean_Time_step=mean(dt, na.rm=TRUE),
                       total_dist=sum(dist[ok], na.rm = TRUE),
@@ -78,29 +83,29 @@ stats.Pos=function(AniObj, graphs=FALSE, verbose=TRUE) {
 
     #X-axis distribution
     v=unlist(lapply(AniObj@Pos, function(p) p$x), use.names = FALSE)
-    hist(v, breaks = "FD", probability = TRUE,
+    graphics::hist(v, breaks = "FD", probability = TRUE,
          col = fill, border = border,
          main = "X-axis distribution", xlab = "x", ylab = "", las = 1)
-      abline(v = mean(v), lwd = 2, lty = 2, col = "firebrick")
-      abline(v = median(v), lwd = 2, lty = 3, col = "darkgreen")
+      graphics::abline(v = mean(v), lwd = 2, lty = 2, col = "firebrick")
+      graphics::abline(v = stats::median(v), lwd = 2, lty = 3, col = "darkgreen")
     graphs[["X-axis_Dist"]]=grDevices::recordPlot()
 
     #Y-axis distribution
     v=unlist(lapply(AniObj@Pos, function(p) p$y), use.names = FALSE)
-    hist(v, breaks = "FD", probability = TRUE,
+    graphics::hist(v, breaks = "FD", probability = TRUE,
                                  col = fill, border = border,
                                  main = "Y-axis distribution", xlab = "y", ylab = "", las = 1)
-    abline(v = mean(v), lwd = 2, lty = 2, col = "firebrick")
-    abline(v = median(v), lwd = 2, lty = 3, col = "darkgreen")
+      graphics::abline(v = mean(v), lwd = 2, lty = 2, col = "firebrick")
+      graphics::abline(v = stats::median(v), lwd = 2, lty = 3, col = "darkgreen")
     graphs[["Y-axis_Dist"]]=grDevices::recordPlot()
 
     #Time distribution
     v=unlist(lapply(AniObj@Pos, function(p) p$Time), use.names = FALSE)
-    hist(v, breaks = "FD", probability = TRUE,
+    graphics::hist(v, breaks = "FD", probability = TRUE,
                                  col = fill, border = border,
                                  main = "Time distribution", xlab = "Time", ylab = "", las = 1)
-    abline(v = mean(v), lwd = 2, lty = 2, col = "firebrick")
-    abline(v = median(v), lwd = 2, lty = 3, col = "darkgreen")
+      graphics::abline(v = mean(v), lwd = 2, lty = 2, col = "firebrick")
+      graphics::abline(v = stats::median(v), lwd = 2, lty = 3, col = "darkgreen")
     graphs[["Time_Dist"]]=grDevices::recordPlot()
 
     l=lapply(seq_along(AniObj@Pos), function(i) {
@@ -123,27 +128,27 @@ stats.Pos=function(AniObj, graphs=FALSE, verbose=TRUE) {
     ll=do.call(rbind, l)
 
     #Time interval distribution
-    hist(ll$dt, probability = TRUE,
+    graphics::hist(ll$dt, probability = TRUE,
                                         col = fill, border = border,
                                         main = "Time interval distribution", xlab = "Time interval", ylab = "", las = 1)
-    abline(v = mean(ll$dt), lwd = 2, lty = 2, col = "firebrick")
-    abline(v = median(ll$dt), lwd = 2, lty = 3, col = "darkgreen")
+      graphics::abline(v = mean(ll$dt), lwd = 2, lty = 2, col = "firebrick")
+      graphics::abline(v = stats::median(ll$dt), lwd = 2, lty = 3, col = "darkgreen")
     graphs[["Time_Interval_Dist"]]=grDevices::recordPlot()
 
     #Time interval distribution
-    hist(ll$dist, probability = TRUE,
+    graphics::hist(ll$dist, probability = TRUE,
                                         col = fill, border = border,
                                         main = "Walked distance distribution", xlab = "Walked distance", ylab = "", las = 1)
-    abline(v = mean(ll$dist), lwd = 2, lty = 2, col = "firebrick")
-    abline(v = median(ll$dist), lwd = 2, lty = 3, col = "darkgreen")
+      graphics::abline(v = mean(ll$dist), lwd = 2, lty = 2, col = "firebrick")
+      graphics::abline(v = stats::median(ll$dist), lwd = 2, lty = 3, col = "darkgreen")
     graphs[["walked_dist_Dist"]]=grDevices::recordPlot()
 
     #Time interval distribution
-    hist(ll$speed, probability = TRUE,
+    graphics::hist(ll$speed, probability = TRUE,
                                       col = fill, border = border,
                                       main = "Speed distribution", xlab = "Speed", ylab = "", las = 1)
-    abline(v = mean(ll$speed), lwd = 2, lty = 2, col = "firebrick")
-    abline(v = median(ll$speed), lwd = 2, lty = 3, col = "darkgreen")
+      graphics::abline(v = mean(ll$speed), lwd = 2, lty = 2, col = "firebrick")
+      graphics::abline(v = stats::median(ll$speed), lwd = 2, lty = 3, col = "darkgreen")
     graphs[["Speed_Dist"]]=grDevices::recordPlot()
 
     dsf[["graphs"]]=graphs

@@ -3,14 +3,6 @@
 .RData
 .Ruserdata
 .gitignore
-
-RELEASES_v2.md
-
-data/animals.csv
-data/barnplan.csv
-data/positions.csv
-data/Cows_data.R
-data/example.json.gz
-data/LövstaPlan.Rdata
-
-vignettes/TestingFuncions.R
+inst/doc
+/doc/
+/Meta/

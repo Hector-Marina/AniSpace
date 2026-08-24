@@ -6,6 +6,8 @@
 #'
 #' @param x Numeric vector of durations in seconds.
 #'
+#' @keywords internal
+#'
 #' @return A character string of the same length, with each element
 #'   formatted in the most suitable unit (seconds, minutes, hours, or days).
 #'

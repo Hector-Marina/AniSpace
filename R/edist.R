@@ -8,11 +8,18 @@
 #' @param x2 set number two of temporal-position information in the X axis
 #' @param y2 set number two of temporal-position information in the Y axis
 #'
-#' @keywords euclidean distance temporal spatial information
+#' @keywords internal
 #'
 #' @return a vector with the Euclidean distance information corresponding to the input values
 #'
 #' @examples
+#' set.seed(123)
+#'
+#' x1=runif(10,0,10)
+#' y1=runif(10,0,10)
+#' x2=runif(10,0,10)
+#' y2=runif(10,0,10)
+#'
 #' euclidean.dist=edist(x1,y1,x2,y2)
 #' head(euclidean.dist)
 #'

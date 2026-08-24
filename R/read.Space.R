@@ -16,8 +16,6 @@
 #' @param na.strings A string to interpret as missing values, passed to read.csv() (*Default: "NA"*).
 #' @param verbose A logical variable specifying whether to print informative messages (*Default: TRUE*).
 #'
-#' @keywords read load animal spatial information csv json
-#'
 #' @return An AniSpace object
 #'
 #' @importFrom data.table fread
@@ -25,8 +23,18 @@
 #' @importFrom jsonlite stream_in
 #'
 #' @examples
-#' df=read.Space(path="data/positions.csv", type="csv")
-#' df
+#' data(cows)
+#'
+#' # Create a temporary position file
+#' file=tempfile(fileext=".csv")
+#' utils::write.csv(cows$positions,file,row.names=FALSE)
+#'
+#' # Read position information into an AniSpace object
+#' AniObj=read.Space(file,type="csv")
+#' AniObj
+#'
+#' # Remove temporary file
+#' unlink(file)
 #'
 #' @export
 
@@ -86,8 +94,8 @@ read.Space=function(path, type="csv",
 
   # Check data content
   if(!all(is.numeric(obj[,Time.col]),  is.numeric(obj[,x.col]), is.numeric(obj[,y.col]))) stop("`Time` and coordinates (`x` and `y`) must be numeric")
-  if(sum(!complete.cases(obj))>0){
-    obj=obj[complete.cases(obj),]
+  if(sum(!stats::complete.cases(obj))>0){
+    obj=obj[stats::complete.cases(obj),]
     if(verbose) message(paste("Missing values were filtered from:", path))
   }
 
@@ -110,7 +118,7 @@ read.Space=function(path, type="csv",
 
 
   # Create the AniSpace object
-  obj=new("AniSpace",
+  obj=methods::new("AniSpace",
       NIDs = 1:length(unique(obj[,ID.col])),
       IDs  = as.character(unique(obj[,ID.col])),
       Info = list(),
@@ -118,5 +126,10 @@ read.Space=function(path, type="csv",
       TRes = TRes,
       Pos  = Pos,
       Area = list())
+
+  # Validate filtered AniObj
+  VAL=validate(obj)
+  if(!VAL) stop("Reading spatial information produced an invalid `AniObj` object.")
+
   return(obj)
 }

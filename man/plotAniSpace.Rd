@@ -14,6 +14,8 @@ plotAniSpace(AniObj, NIDs = NULL, IDs = NULL, Area = NULL, ...)
 \item{IDs}{Character. Vector containing the identification of the individuals (\emph{Default: first}).}
 
 \item{Area}{Numeric. Information about the areas available for the individuals (Polygon format) (\emph{Default: all}).}
+
+\item{...}{Additional graphical arguments passed to \code{plot()}.}
 }
 \value{
 Plot AniSpace position information
@@ -22,10 +24,9 @@ Plot AniSpace position information
 \code{plotAniSpace()} plot AniSpace position information
 }
 \examples{
-validate(df)
+plot(AniObj,IDs="Cow1_G1")
 
-plot.AniSpace(df, IDs="2428706")
-
-plot.AniSpace(df, IDs="2428706", Area=names(df@Area)[c(1:7)])
+Areas=sapply(AniObj@Area,`[[`,"ID")
+plot(AniObj,IDs="Cow1_G1",Area=Areas[1:7])
 
 }

@@ -24,3 +24,4 @@ epoch2time(5400)    # "1.5 hours"
 epoch2time(86400)   # "1.0 days"
 
 }
+\keyword{internal}

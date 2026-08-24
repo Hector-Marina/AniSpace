@@ -14,6 +14,8 @@ rebase(AniObj)
 aligning positional or temporal data to a new baseline.
 }
 \examples{
-df=rebase(df)
+AniObj=rebase(AniObj)
+AniObj
 
 }
+\keyword{internal}

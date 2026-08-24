@@ -15,6 +15,7 @@ and area data meet expected structural and logical criteria.}
 \code{validate()} Verifies and Consistency Checks for AniSpace Objects
 }
 \examples{
-validate(df)
+validate(AniObj)
 
 }
+\keyword{internal}

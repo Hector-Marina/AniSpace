@@ -5,36 +5,93 @@
 \alias{AniSpace-class}
 \title{AniSpace class}
 \description{
-An S4 class to represent the spatio-temporal data of multiple individuals.
+An S4 class representing the spatial and temporal information of multiple
+individuals, together with optional spatial-interaction and
+utilisation-distribution analyses.
 }
 \section{Slots}{
 
 \describe{
-\item{\code{NIDs}}{Numeric. Vector containing the assigned index of the individuals.}
+\item{\code{NIDs}}{Numeric vector containing the numerical index assigned to each
+individual.}
 
-\item{\code{IDs}}{Character. Vector containing the identification of the individuals.}
+\item{\code{IDs}}{Character vector containing the individual identifiers.}
 
-\item{\code{Info}}{List. Indexed information about the individuals.}
+\item{\code{Info}}{List containing individual-level information. Elements should
+generally have one value per individual.}
 
-\item{\code{TLim}}{Numeric. Contains information about the temporal range covered by the positions (Index=1s).}
+\item{\code{TLim}}{Numeric vector of length two containing the minimum and maximum
+temporal limits covered by the positions.}
 
-\item{\code{TRes}}{Numeric. Maximum temporal resolution of the positions (e.g. smallest time step).}
+\item{\code{TRes}}{Numeric value containing the temporal resolution of the positions,
+expressed in the units used by the object.}
 
-\item{\code{Pos}}{List. Indexed positions (x,y,z) of the individuals.}
+\item{\code{Pos}}{List containing the spatial positions of each individual. Each
+element corresponds to one individual.}
 
-\item{\code{Area}}{List. Information about the spatial area available for the individuals (Polygon format).}
+\item{\code{Area}}{List containing the spatial area available to each individual,
+generally represented by polygon coordinates.}
+
+\item{\code{SI}}{List containing pairwise spatial-interaction results. An empty list
+indicates that no spatial-interaction analysis has been performed. Otherwise,
+the list contains:
+\itemize{
+\item \code{method}: interaction method (\code{"time"}, \code{"nint"}, or \code{"all"}).
+\item \code{dist.thr}: optional spatial-distance threshold.
+\item \code{time.thr}: optional temporal threshold.
+\item \code{M}: square pairwise spatial-interaction matrix.
+}}
+
+\item{\code{UD}}{List containing utilisation-distribution results. An empty list
+indicates that no utilisation distribution has been estimated. Otherwise,
+the list contains:
+\itemize{
+\item \code{method}: utilisation method (\code{"grid"}, \code{"poly"}, or \code{"HR"}).
+\item \code{parameters}: list of parameters used to estimate the distribution,
+including the spatial grid limits when applicable.
+\item \code{UD}: list containing one utilisation-distribution result per individual.
+}
+
+For \code{"grid"}, each valid element of \code{UD} is a data frame containing \code{cell}
+and \code{z}. For \code{"poly"}, each valid element is a closed polygon represented by
+\code{x} and \code{y} coordinates. For \code{"HR"}, each valid element is an \code{estUD} object.
+Individuals without sufficient information are represented by \code{NULL}.}
+
+\item{\code{UDsim}}{List containing pairwise utilisation-distribution similarities.
+An empty list indicates that no similarity analysis has been performed.
+Otherwise, the list contains:
+\itemize{
+\item \code{method}: utilisation method associated with the comparison.
+\item \code{sim.method}: similarity method (\code{"binary"} or \code{"continuous"}).
+\item \code{HR.level}: probability contour used for kernel home-range comparisons.
+\item \code{M}: square pairwise similarity matrix with values between 0 and 1.
+}
+
+Rows of \code{M} represent focal individuals and columns represent the individuals
+against which their utilisation is compared. The matrix may therefore be
+directional. Continuous kernel home-range similarity is symmetric.}
 }}
 
 \examples{
-new("AniSpace",
-    NIDs = c(1,2),
-    IDs  = c("A","B"),
-    Info = list(Trait1 = runif(2), Trait2 = runif(2)),
-    TLim = as.numeric(as.POSIXct(c("2021-01-01","2021-01-02"), tz="UTC")),
-    TRes = 1,
-    Pos  = list(as.matrix(data.frame(x = runif(43200), y = runif(43200))),
-                as.matrix(data.frame(x = runif(43200), y = runif(43200)))),
-    Area = list(A = as.matrix(data.frame(x = runif(5), y = runif(5))),
-                B = as.matrix(data.frame(x = runif(5), y = runif(5))))))
+# Create an object without derived analyses
+AniObj=new(
+  "AniSpace",
+  NIDs=c(1,2),
+  IDs=c("A","B"),
+  Info=list(Trait1=c(0.2,0.8)),
+  TLim=as.numeric(as.POSIXct(
+    c("2021-01-01","2021-01-02"),tz="UTC")),
+  TRes=1,
+  Pos=list(
+    A=matrix(runif(20),ncol=2,
+      dimnames=list(NULL,c("x","y"))),
+    B=matrix(runif(20),ncol=2,
+      dimnames=list(NULL,c("x","y")))
+  ),
+  Area=list(),
+  SI=list(),
+  UD=list(),
+  UDsim=list()
+)
 
 }

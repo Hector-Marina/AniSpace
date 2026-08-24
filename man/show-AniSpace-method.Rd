@@ -2,17 +2,13 @@
 % Please edit documentation in R/AniSpace-methods.R
 \name{show,AniSpace-method}
 \alias{show,AniSpace-method}
-\title{\enumerate{
-\item Show method for AniSpace
-}}
+\title{Show method for AniSpace}
 \usage{
 \S4method{show}{AniSpace}(object)
 }
 \arguments{
-\item{AniObj}{An AniSpace object}
+\item{object}{An \code{AniSpace} object.}
 }
 \description{
-\enumerate{
-\item Show method for AniSpace
-}
+Displays a summary of the information contained in an \code{AniSpace} object.
 }

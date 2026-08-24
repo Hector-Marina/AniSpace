@@ -15,9 +15,13 @@
 #' @return list of polygons
 #'
 #' @examples
-#' bf=read.csv("data/barnplan.csv", header=T)
-#' cf=square2poly(bf)
-#' head(cf,1)
+#' data(cows)
+#'
+#' # Convert rectangular area information to polygon format
+#' AreaObj=square2poly(cows$areas)
+#'
+#' # Inspect the first polygon
+#' AreaObj[[1]]
 #'
 #' @export
 

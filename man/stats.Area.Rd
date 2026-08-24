@@ -20,14 +20,15 @@ Descriptive statistics of the areas detailed in the AniSpace object.
 \code{stats.Area} estimates the descriptive statistics of the areas detailed in the AniSpace object.
 }
 \examples{
-df.stats.Area=stats.Area(AniObj=df, graphs=FALSE)
+# Estimate descriptive statistics for the defined areas
+df.area=stats.Area(AniObj,graphs=FALSE,verbose=FALSE)
+head(df.area)
 
-head(df.stats.Area$DescriptiveStats)
+# Estimate descriptive statistics and generate the area plot
+df.area.graph=stats.Area(AniObj,graphs=TRUE,verbose=FALSE)
+head(df.area.graph$DescriptiveStats)
 
-df.stats.Area$graphs[[1]]
+# Display the stored area plot
+df.area.graph$graphs[[1]]
 
 }
-\keyword{area}
-\keyword{descriptive}
-\keyword{information}
-\keyword{statistics}

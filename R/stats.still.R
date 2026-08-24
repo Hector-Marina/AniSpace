@@ -1,7 +1,7 @@
 #' Estimate accuracy of the positioning system
 #'
 #' @description
-#' `stand.still` estimate accuracy of the positioning system using stand-still devices
+#' `stats.Still` estimate accuracy of the positioning system using stand-still devices
 #'
 #' @param AniObj An AniSpace object containing the spatio-temporal information of the individuals.
 #' @param NIDs Numeric. Vector containing the assigned index of the individuals (*Default: NULL*).
@@ -10,17 +10,26 @@
 #' @param graphs A logical variable indicates whether the filtered position will be depicted by individual (TRUE) or not (FALSE) (*Default: FALSE*).
 #' @param verbose A logical variable specifying whether to print informative messages (*Default: TRUE*).
 #'
-#' @keywords accuracy system estimation stand-still devices
-#'
 #' @return Estimated accuracy of the system
 #'
 #' @examples
-#' # Estimate accuracy of the positioning system using stand-still devices
-#' StandStill.acc=stand.still(df,keep. NIDs=c(1:10))
+#' # Estimate positioning accuracy for selected stand-still devices
+#' df.still=stats.Still(AniObj,NIDs=c(8:17),percentile=0.99,
+#'                      verbose=FALSE)
+#' head(df.still)
+#'
+#' # Estimate accuracy for multiple percentiles and generate a plot
+#' df.still.graph=stats.Still(AniObj,NIDs=c(8:17),
+#'                            percentile=c(0.50,0.95,0.99),
+#'                            graphs=TRUE,verbose=FALSE)
+#' head(df.still.graph$stats)
+#'
+#' # Display the stored accuracy plot
+#' df.still.graph$graphs
 #'
 #' @export
 
-stats.still=function(AniObj, NIDs=NULL, IDs=NULL, percentile=0.99, graphs=FALSE, verbose=TRUE) {
+stats.Still=function(AniObj, NIDs=NULL, IDs=NULL, percentile=0.99, graphs=FALSE, verbose=TRUE) {
 
   # Control parameters
   if (!inherits(AniObj, "AniSpace")) stop("`AniObj` must be class 'AniSpace'.")
@@ -54,7 +63,7 @@ stats.still=function(AniObj, NIDs=NULL, IDs=NULL, percentile=0.99, graphs=FALSE,
       stringsAsFactors = FALSE
     )
 
-    qv=as.numeric(quantile(d, probs = percentile, na.rm = TRUE, names = FALSE))
+    qv=as.numeric(stats::quantile(d, probs = percentile, na.rm = TRUE, names = FALSE))
     qn=paste0("q", gsub("\\.?0+$", "", format(100 * percentile, trim = TRUE)))
     out[qn]=qv
     out
@@ -84,13 +93,13 @@ stats.still=function(AniObj, NIDs=NULL, IDs=NULL, percentile=0.99, graphs=FALSE,
 
     # Plot polygons
     for (jj in 1:length(AniObj@Area)) {
-      polygon(c(AniObj@Area[[jj]]$coords[,"x"]),
-              c(AniObj@Area[[jj]]$coords[,"y"]),
-              col = AniObj@Area[[jj]]$color)}
+      graphics::polygon(c(AniObj@Area[[jj]]$coords[,"x"]),
+                        c(AniObj@Area[[jj]]$coords[,"y"]),
+                        col = AniObj@Area[[jj]]$color)}
 
     # Plot positions
-    for (ii in 1:length(NIDs)){
-      points(x = AniObj@Pos[[ii]]$x, y = AniObj@Pos[[ii]]$y, col = "orange", cex=0.5)
+    for (ii in NIDs){
+      graphics::points(x = AniObj@Pos[[ii]]$x, y = AniObj@Pos[[ii]]$y, col = "orange", cex=0.5)
     }
 
     # Plot radious
@@ -100,10 +109,10 @@ stats.still=function(AniObj, NIDs=NULL, IDs=NULL, percentile=0.99, graphs=FALSE,
     }
     for (i in 1:nrow(o)){
       for (j in 1:length(percentile)){
-        symbols(o[i,4],o[i,5],
-                circles = o[i,(6+j)],
-                inches = FALSE, add = TRUE,
-                fg = Rcols[j], lwd = 1.5)
+        graphics::symbols(o[i,4],o[i,5],
+                          circles = o[i,(6+j)],
+                          inches = FALSE, add = TRUE,
+                          fg = Rcols[j], lwd = 1.5)
       }
     }
     stats[["graphs"]]=grDevices::recordPlot()

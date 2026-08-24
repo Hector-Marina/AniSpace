@@ -11,6 +11,7 @@ filterAniSpace(
   TimeWindow = NULL,
   Area = NULL,
   soft.boundaries = 0,
+  bring.back = FALSE,
   verbose = TRUE
 )
 }
@@ -25,7 +26,9 @@ filterAniSpace(
 
 \item{Area}{A character variable or vector indicating the areas for which time/position data will be preserved (\emph{Default: ALL}).}
 
-\item{soft.boundaries}{A numeric variable indicating the distance threshold allowed outside the boundaries that will be brought back to the boundaries. The position reported after this threshold will be filtered (e.g. \emph{soft.boundaries=2}; in the same unit of measurement that corresponds to the data (e.g. metres, centimetres, etc.) (\emph{Default: 0}).}
+\item{soft.boundaries}{A non-negative numeric value specifying the maximum distance outside an area's boundary at which positions are still retained (\emph{Default: 0}).}
+
+\item{bring.back}{A logical value indicating whether positions located outside the selected area should be moved inside the boundaries of that single area (\emph{Default: FALSE}).}
 
 \item{verbose}{A logical variable specifying whether to print informative messages (\emph{Default: TRUE}).}
 }
@@ -37,24 +40,18 @@ A filtered animal position object
 }
 \examples{
 # Filter five individuals
-df.ID.filt=filterAniSpace(df,NIDs=c(1:5))
+df.ID.filt=filterAniSpace(AniObj,NIDs=c(1:5))
 df.ID.filt
 
 # Filter a specific time window
 Tmin=as.numeric(as.POSIXct("2020-10-16 11:00:00", format = "\%Y-\%m-\%d \%H:\%M:\%S", tz = "UTC"))
 Tmax=as.numeric(as.POSIXct("2020-10-16 11:59:59", format = "\%Y-\%m-\%d \%H:\%M:\%S", tz = "UTC"))
-df.Time.filt=filterAniSpace(df,TimeWindow=c(Tmin,Tmax))
+df.Time.filt=filterAniSpace(AniObj,TimeWindow=c(Tmin,Tmax))
 df.Time.filt
 
 # Filter positions from the resting area
-df.Area.filt=filterAniSpace(df,Area=names(df@Area)[c(1:5)])
+df.Area.filt=filterAniSpace(AniObj,Area=names(AniObj@Area)[c(1:5)])
 df.Area.filt
 
 
 }
-\keyword{animal}
-\keyword{filter}
-\keyword{information}
-\keyword{position}
-\keyword{spatial}
-\keyword{temporal}

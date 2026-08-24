@@ -1,6 +1,6 @@
-# AniSpace v0.0.2
+# AniSpace v1.0.0
 
-![AniSpace Logo](logo/logo.jpg)
+![AniSpace Logo](man/figures/logo.jpg)
 
 <img src="https://img.shields.io/badge/license-SLU-green.svg" alt="License: SLU"/> <img src="https://img.shields.io/badge/topic-Animal%20Movement-orange.svg" alt="Topic"/> <img src="https://img.shields.io/badge/topic-Position%20Data-blue.svg" alt="Topic"/>
 
@@ -8,12 +8,19 @@ The **AniSpace** R package provides a flexible and efficient framework to perfor
 spatial analysis of livestock and wild animal populations. It is specifically 
 designed for **high-resolution position data** and supports workflows such as:
 
--   Cleaning and validation of position data
--   Filtering, interpolating and refining location data
--   Deriving the precision of the positioning system
--   Deriving movement metrics (speed, step length, turning angles)
--   Estimating entity-entity and entity-environment spatial interactions
--   Estimating space use (areas, paths, home ranges)
+-   Importing, structuring, and filtering spatio-temporal position data
+-   Interpolating missing positions and smoothing individual movement trajectories
+-   Detecting, filtering, and smoothing positional spikes based on movement speed
+-   Quantifying positioning-system accuracy using stand-still reference devices
+-   Deriving movement metrics including step distance, speed, and turning angle
+-   Quantifying individual use of predefined environmental or facility areas
+-   Classifying movement observations into movement-behaviour clusters
+-   Estimating pairwise spatial interactions between individuals
+-   Estimating individual utilisation distributions using grid-, polygon-, and kernel-based approaches
+-   Quantifying pairwise similarity between individual utilisation distributions**
+-   Calculating descriptive statistics for position data, movement, facility areas, and utilisation distributions
+-   Visualising animal trajectories, spatial-interaction networks, utilisation distributions, and facility layouts
+-   Fitting dyadic regression models to evaluate how individual- and pair-level characteristics are associated with spatial interactions
 
 🔗 **Official projects supporting the development of this package**:
 
@@ -23,26 +30,28 @@ designed for **high-resolution position data** and supports workflows such as:
 
 ![CSIDT Logo](man/figures/CSIDTLogo.jpg) ![DigiGuard Logo](man/figures/DGLogo.png)
 
-📍 **Place**: SLU, Uppsala, Sweden
+📍 **Developed at:** Swedish University of Agricultural Sciences (SLU), Uppsala, Sweden
 
-📅 **Full release data**: 1 December 2026
-
-![Cat coding](https://raw.githubusercontent.com/fate0/fate0/master/artwork/pusheencode.gif)
+📅 **Version 1.0.0 release date:** 24 August 2026
 
 ------------------------------------------------------------------------
 
 ## Installation
 
-You can install the development version of `AniSpace` from GitHub using remotes:
+You can install the development version of `AniSpace` from GitHub using `remotes`:
 
 ``` r
 # install.packages("remotes")
-remotes::install_github("Hector-Marina/AniSpace")
+remotes::install_github("Hector-Marina/AniSpace", build_vignettes=TRUE)
 ```
 
-## Learn more
+## Tutorial
 
-If you want to learn how to use the `AniSpace` R package with real data, download and follow our example code ([examples](https://github.com/Hector-Marina/AniSpace/tree/main/vignettes)) for a step-by-step walkthrough with code and results.
+A complete tutorial covering the main `AniSpace` workflow is included as a package vignette. After installing `AniSpace` with the vignettes enabled, it can be opened directly from R using:
+
+```r
+browseVignettes("AniSpace")
+```
 
 ------------------------------------------------------------------------
 
@@ -64,7 +73,7 @@ Any suggestions, bug reports, forks and pull requests are appreciated. Get in to
 
 ## Citation
 
-If you use `AniSpace` in your research, please cite:
+If you use `AniSpace` in your research, please cite the package and the publications relevant to the methods used in your analysis:
 
 > **Marina, H., Ren, K., Hansson, I., Fikse, F., Nielsen, P.P. & Rönnegård, L. (2024).** New insight into social relationships in dairy cows and how time of birth, parity, and relatedness affect spatial interactions later in life. *Journal of Dairy Science* [<https://doi.org/10.3168/JDS.2023-23483>]<https://doi.org/10.3168/JDS.2023-23483>
 
